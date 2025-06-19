@@ -10,7 +10,7 @@ if (isset($_SESSION["email"]) && isset($_SESSION["token"])) {
         if ($_SESSION['role'] === 'admin') {
             header("Location: admin.php");
         } else {
-            header("Location: client.php");
+            header("Location: utilisateur.php");
         }
         exit();
     } else {
@@ -45,7 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if ($utilisateur['role'] === 'admin') {
                 header("Location: admin.php");
             } else {
-                header("Location: client.php");
+                header("Location: utilisateur.php");
             }
             exit();
         } else {
