@@ -26,17 +26,26 @@ if (isset($_SESSION["authenticated"]) && $_SESSION["authenticated"] === true) {
 </head>
 
 <body>
-  <div class="top-nav">
-    <ul>
-      <li><img src="../assets/icon/cafe-run-icon.png" alt="Cafe Run Icon">Home</li>
-      <div class="search-bar">
-        <input type="text" placeholder="Search..." disabled>
-        <button type="submit" disabled>Search</button>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        <!-- <img src="../assets/icon/cafe-run-icon.png" width="32" height="32"> -->
+        Cafe Run
+      </a>
+      <form class="d-flex mx-auto">
+        <input class="form-control me-2" type="search" placeholder="Recherche..." aria-label="Recherche" disabled>
+        <button class="btn btn-outline-success" type="submit" disabled>Rechercher</button>
+      </form>
+      <div class="d-flex">
+        <button class="btn btn-primary me-2">
+          <a href="inscription.php" class="text-white text-decoration-none">S'inscrire</a>
+        </button>
+        <button class="btn btn-primary">
+          <a href="connexion.php" class="text-white text-decoration-none">Se connecter</a>
+        </button>
       </div>
-      <li><a href="inscription.php">S'inscrire</a></li>
-      <li><a href="connexion.php">Se connecter</a></li>
-    </ul>
-  </div>
+    </div>
+  </nav>
   <?php include 'explore.php'; ?>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
