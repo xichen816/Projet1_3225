@@ -1,16 +1,8 @@
 <?php
 session_start();
-$authenticated = false;
-if (isset($_SESSION["authenticated"]) && $_SESSION["authenticated"] === true) {
-    // User is authenticated, proceed with the request
-    echo "You are authenticated.";
-    $authenticated = true;
-} else {
-    // User is not authenticated, redirect to login page
-    $authenticated = false;
-    // header("Location: connexion.php");
-    // exit();
-}
+// TODO : Navbar (Login, Sign up, Search bar? Filters?)
+// TODO : Review tiles : Explore section with tiles of reviews
+// TODO : Pagination, Load more, page buttons, etc...
 ?>
 <!DOCTYPE html>
 <html>

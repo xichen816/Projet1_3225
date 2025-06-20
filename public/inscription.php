@@ -1,4 +1,6 @@
 <?php
+session_start();
+// TODO : Add styling
 require_once "config/config.php";
 
 $error_msg = "";

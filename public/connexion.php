@@ -1,4 +1,7 @@
 <?php
+session_start();
+// TODO : Add styling
+
 require_once "config/config.php";
 
 if (isset($_SESSION["email"]) && isset($_SESSION["token"])) {
