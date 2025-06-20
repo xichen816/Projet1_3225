@@ -1,5 +1,5 @@
 <?php
-require_once "config/config.php"; 
+require_once "config/config.php";
 
 $error_msg = "";
 $success_msg = "";
@@ -32,7 +32,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 "token" => $token
             ]);
 
-            $success_msg = "Inscription réussie ! Vous pouvez désormais vous connecter.";
+            $success_msg = "Inscription réussie !";
+            header("Location: connexion.php");
+            exit();
         } catch (PDOException $e) {
             $error_msg = "Erreur lors de l'inscription : " . $e->getMessage();
         }
