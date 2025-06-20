@@ -1,5 +1,8 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+  session_start();
+}
+
 if (isset($_SESSION["authenticated"]) && $_SESSION["authenticated"] === true) {
   // User is authenticated, proceed with the request
   echo "You are authenticated.";

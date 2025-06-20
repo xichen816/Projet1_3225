@@ -1,4 +1,8 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once "config/config.php";
 
 if (!isset($_SESSION['email']) || !isset($_SESSION['token'])) {

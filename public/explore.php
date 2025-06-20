@@ -1,16 +1,15 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 require_once "../config/config.php";
 // TODO : Navbar (Login, Sign up, Search bar? Filters?)
 // TODO : Review tiles : Explore section with tiles of reviews
 // TODO : Pagination, Load more, page buttons, etc...
 
-$stmt = $pdo->query("SELECT * FROM reviews ORDER BY created_at DESC LIMIT 15");
+$stmt = $pdo->query("SELECT * FROM revues ORDER BY date DESC LIMIT 15");
 $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
-if (!isset($_SESSION['email']) || !isset($_SESSION['token'])) {
-    header("Location: connexion.php");
-    exit();
-}
 
 ?>
 <section id="explore" class="container mt-4">

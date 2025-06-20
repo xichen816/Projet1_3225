@@ -1,5 +1,8 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // TODO : Navbar (Search bar, Filters, Hamburger menu (profile, settings, logout)
 // TODO : Content (Two columns (user feed (recent reviews, followed profiles), user reviews))
 // TODO : Loading/Pagination (Load more, page buttons, etc...)

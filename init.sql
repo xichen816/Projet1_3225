@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS gestion_taches DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE gestion_taches;
+CREATE DATABASE IF NOT EXISTS cafe_run DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE cafe_run;
 
 CREATE TABLE utilisateurs (
     id INT AUTO_INCREMENT PRIMARY KEY,

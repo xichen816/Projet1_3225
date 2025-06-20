@@ -1,10 +1,10 @@
 <?php
 // Session initialization and user authentication
 require_once "../config/config.php";
-if(session_status() == PHP_SESSION_NONE) {
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
-
 }
+
 
 $_SESSION['authenticated'] = false;
 
