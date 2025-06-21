@@ -66,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             );
             exit();
         } else {
-            json_encode(
+            echo json_encode(
                 [
                     "success" => false,
                     "message" => "Identifiants incorrects. Veuillez réessayer.",
@@ -77,10 +77,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             exit();
         }
     } else {
-        json_encode(
+        echo json_encode(
             [
                 "success" => false,
-                "message: Veuillez remplir tous les champs.",
+                "message" => "Veuillez remplir tous les champs.",
                 "role" => null,
                 "userId" => null,
             ]

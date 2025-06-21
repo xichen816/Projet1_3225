@@ -5,32 +5,70 @@ if (session_status() === PHP_SESSION_NONE) {
 
 header('Content-Type: application/json');
 require_once '../../config/config.php';
+require_once '../api/review.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
+$review = new Review($pdo);
+
+$input = json_decode(file_get_contents('php://input'), true);
 
 switch ($method) {
   case 'GET':
     // Fetch reviews logic
-    echo json_encode($reviews);
+    try {
+      $reviews = $review->fetchAll();
+      echo json_encode($reviews);
+    } catch (PDOException $e) {
+      echo json_encode([
+        "success" => false, 
+        "message" => "Review fetch error.",
+        "error" => $e->getMessage()
+        ]);
+    }
     break;
 
   case 'POST':
     // Add review logic
-    echo json_encode(["success" => true, "review_id" => $id]);
+    try {
+      $id = $review->create($input);
+      echo json_encode(["success" => true, "review_id" => $id]);
+    } catch (PDOException $e) {
+      echo json_encode(["success" => false, "message" => "Add review error."]);
+    }
     break;
 
   case 'PUT':
     // Update review logic
-    echo json_encode(["updated" => true]);
+    if (!isset($_GET['id'])) {
+      http_response_code(400);
+      echo json_encode(["success" => false, "message" => "Missing review ID"]);
+      break;
+    }
+    try {
+      $success = $review->update($_GET['id'], $input);
+      echo json_encode(["updated" => $success]);
+    } catch (PDOException $e) {
+      echo json_encode(["success" => $success, "message" => "Update review error."]);
+    }
     break;
 
   case 'DELETE':
     // Delete review logic
-    echo json_encode(["deleted" => true]);
+    if (!isset($_GET['id'])) {
+      http_response_code(400);
+      echo json_encode(["success" => false, "message" => "Missing review ID"]);
+      exit();
+    }
+    try {
+      $success = $review->delete($_GET['id']);
+      echo json_encode(["deleted" => true]);
+    } catch (PDOException $e) {
+      echo json_encode(["success" => $success, "message" => "Delete review error."]);
+    }
     break;
 
   default:
     http_response_code(405); // Method Not Allowed
     break;
 }
-?>
+
