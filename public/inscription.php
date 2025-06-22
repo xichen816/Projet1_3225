@@ -55,6 +55,7 @@ if (isset($_SESSION["authenticated"]) && $_SESSION["authenticated"] === true) {
                 const password = this.password.value;
                 signUpUser(nom, email, password);
             });
-</body >
+        </script>
+</body>
 
-</html >
+</html>
