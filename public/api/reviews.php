@@ -39,16 +39,21 @@ switch ($method) {
 
   case 'PUT':
     // Update review logic
-    if (!isset($_GET['id'])) {
+    if (!isset($input['id'])) {
       http_response_code(400);
       echo json_encode(["success" => false, "message" => "Missing review ID"]);
       break;
     }
-    try {
-      $success = $review->update($_GET['id'], $input);
-      echo json_encode(["updated" => $success]);
-    } catch (PDOException $e) {
-      echo json_encode(["success" => $success, "message" => "Update review error."]);
+    if ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] === $review->getUserId($reviewId)) {
+      try {
+        $success = $review->update($input['id'], $input);
+        echo json_encode(["updated" => $success]);
+      } catch (PDOException $e) {
+        echo json_encode(["success" => false, "message" => "Update review error."]);
+      }
+    } else {
+      http_response_code(403);
+      echo json_encode(["success" => false, "message" => "Unauthorized"]);
     }
     break;
 
@@ -59,11 +64,13 @@ switch ($method) {
       echo json_encode(["success" => false, "message" => "Missing review ID"]);
       exit();
     }
-    try {
-      $success = $review->delete($_GET['id']);
-      echo json_encode(["deleted" => true]);
-    } catch (PDOException $e) {
-      echo json_encode(["success" => $success, "message" => "Delete review error."]);
+    if ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] === $review->getUserId($reviewId)) {
+      try {
+        $success = $review->delete($_GET['id']);
+        echo json_encode(["deleted" => $success]);
+      } catch (PDOException $e) {
+        echo json_encode(["success" => false, "message" => "Delete review error."]);
+      }
     }
     break;
 

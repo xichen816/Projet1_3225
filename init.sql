@@ -29,14 +29,17 @@ CREATE TABLE categories (
 
 CREATE TABLE revues (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    titre VARCHAR(255) NOT NULL,
     id_cafe INT NOT NULL,
     id_utilisateur INT NOT NULL,
+    id_categorie INT DEFAULT NULL,
+    image_url VARCHAR(255) DEFAULT NULL,
     rating INT CHECK (rating >= 1 AND rating <= 5), -- Rating entre 1 et 5
     contenu TEXT DEFAULT NULL, -- Contenu de la revue
-    titre VARCHAR(255) NOT NULL,
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_cafe) REFERENCES cafes(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_utilisateur) REFERENCES utilisateurs(id) ON DELETE CASCADE
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_categorie) REFERENCES categories(id) ON DELETE SET NULL
 );
 
 CREATE TABLE revues_categories (
@@ -84,16 +87,4 @@ CREATE TABLE likes (
     UNIQUE (id_revue, id_utilisateur), -- Un utilisateur ne peut aimer une revue qu'une seule fois
     FOREIGN KEY (id_revue) REFERENCES revues(id) ON DELETE CASCADE,
     FOREIGN KEY (id_utilisateur) REFERENCES utilisateurs(id) ON DELETE CASCADE
-);
-
-CREATE TABLE tuiles (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    titre VARCHAR(255) NOT NULL,
-    description TEXT,
-    date DATE NOT NULL,
-    image_url VARCHAR(255) DEFAULT NULL,
-    id_utilisateur INT NOT NULL,
-    id_categorie INT DEFAULT NULL,
-    FOREIGN KEY (id_utilisateur) REFERENCES utilisateurs(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_categorie) REFERENCES categories(id) ON DELETE SET NULL
 );
