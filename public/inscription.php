@@ -52,9 +52,10 @@ if (isset($_SESSION["authenticated"]) && $_SESSION["authenticated"] === true) {
                 event.preventDefault();
                 const nom = this.nom.value;
                 const email = this.email.value;
-                const password = this.password.value;
-                signUpUser(nom, email, password);
+            const password = this.password.value;
+                signupUser(nom, email, password);
             });
+        </script>
 </body >
 
 </html >
