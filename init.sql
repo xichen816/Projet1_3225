@@ -38,8 +38,7 @@ CREATE TABLE revues (
     rating INT CHECK (rating >= 1 AND rating <= 5),
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_cafe) REFERENCES cafes(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_utilisateur) REFERENCES utilisateurs(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_categorie) REFERENCES categories(id) ON DELETE SET NULL
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateurs(id) ON DELETE CASCADE
 );
 
 
