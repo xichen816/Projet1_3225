@@ -58,4 +58,4 @@ if (isset($_SESSION["authenticated"]) && $_SESSION["authenticated"] === true) {
         </script>
 </body >
 
-</html >
+</html>

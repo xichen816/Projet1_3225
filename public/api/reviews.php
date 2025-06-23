@@ -121,7 +121,7 @@ switch ($method) {
       echo json_encode(["success" => false, "message" => "Missing review ID"]);
       break;
     }
-    if ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] === $review->getUserId($reviewId)) {
+    if ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] === $review->getOwnerId($reviewId)) {
       try {
         $success = $review->update($input['id'], $input);
         echo json_encode(["updated" => $success]);
@@ -140,7 +140,7 @@ switch ($method) {
       echo json_encode(["success" => false, "message" => "Missing review ID"]);
       exit();
     }
-    if ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] === $review->getUserId($reviewId)) {
+    if ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] === $review->getOwnerId($reviewId)) {
       try {
         $success = $review->delete($_GET['id']);
         echo json_encode(["deleted" => $success]);
