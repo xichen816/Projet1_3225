@@ -81,7 +81,21 @@ class Review {
         ";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':id' => $id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $review = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($review) {
+            $catSql = "
+            SELECT cat.id, cat.nom
+            FROM categories cat
+            JOIN revues_categories rc ON cat.id = rc.id_categorie
+            WHERE rc.id_revue = :id_revue
+            ";
+            $catStmt = $this->pdo->prepare($catSql);
+            $catStmt->execute([':id_revue' => $id]);
+            $review['categories'] = $catStmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        return $review;
     }
 
     public function fetchFeed($userId)
