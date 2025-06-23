@@ -32,7 +32,6 @@ CREATE TABLE revues (
     titre VARCHAR(255) NOT NULL,
     id_cafe INT NOT NULL,
     id_utilisateur INT NOT NULL,
-    id_categorie INT DEFAULT NULL,
     image_url VARCHAR(255) DEFAULT NULL,
     description TEXT NOT NULL, -- Short preview (gets auto-cut from contenu when inserted)
     contenu TEXT NOT NULL,     -- Full review body
@@ -45,7 +44,7 @@ CREATE TABLE revues (
 
 
 CREATE TABLE revues_categories (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    PRIMARY KEY (id_revue, id_categorie),
     id_categorie INT NOT NULL,
     id_revue INT NOT NULL,
     FOREIGN KEY (id_categorie) REFERENCES categories(id) ON DELETE CASCADE,

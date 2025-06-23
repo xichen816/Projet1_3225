@@ -9,7 +9,7 @@ class Review {
     public function getOwnerId($reviewId) {
         $sql = 'SELECT id_utilisateur FROM revues WHERE id = :reviewId';
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute();
+        $stmt->execute([':reviewId' => $reviewId]);
 
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         return $result ? $result['id_utilisateur'] : null;
@@ -140,8 +140,8 @@ class Review {
     public function create($data) {
         $this->pdo->beginTransaction();
         try {
-            $sql = "INSERT INTO revues (id_cafe, id_utilisateur, id_categorie, rating, contenu, description, titre)
-                    VALUES (:id_cafe, :id_utilisateur, :id_categorie, :rating, :contenu, :description, :titre)";
+            $sql = "INSERT INTO revues (id_cafe, id_utilisateur, rating, contenu, description, titre)
+                    VALUES (:id_cafe, :id_utilisateur, :rating, :contenu, :description, :titre)";
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([
                 ':id_cafe' => $data['id_cafe'],
@@ -188,14 +188,13 @@ class Review {
     }
 
     public function update($id, $data) {
-        $sql = "UPDATE revues SET titre = :titre, contenu = :contenu, rating = :rating, id_categorie = :id_categorie
+        $sql = "UPDATE revues SET titre = :titre, contenu = :contenu, rating = :rating
                 WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
             ':titre' => $data['titre'],
             ':contenu' => $data['contenu'],
             ':rating' => $data['rating'],
-            ':id_categorie' => $data['id_categorie'] ?? null,
             ':id' => $id
         ]);
 
