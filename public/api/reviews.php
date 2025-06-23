@@ -33,6 +33,13 @@ switch ($method) {
   case 'GET':
     // Fetch all or single review by id
     try {
+      if (isset($_GET['feed']) && isset($_GET['user_id'])) {
+        $userId = intval($_GET['user_id']);
+        $feed = $review->fetchFeed($userId);
+        echo json_encode($feed);
+        exit();
+      }
+
       if (isset($_GET['id'])) {
         $id = intval($_GET['id']);
         $reviewData = $review->fetchById($id);
@@ -42,16 +49,29 @@ switch ($method) {
           $reviewData['photos'] = $photos;
           $reviewData['thumbnail'] = $thumbnail;
           echo json_encode($reviewData);
+          exit();
         } else {
           echo json_encode([
             "success" => false,
             "message" => "Review not found."
           ]);
+          exit();
         }
-      } else {
-        $reviews = $review->fetchAll();
-        echo json_encode($reviews);
       }
+
+      // Fetch reviews by user ID
+      if (isset($_GET['user_id'])) {
+        $userId = intval($_GET['user_id']);
+        $userReviews = $review->fetchByUserId($userId);
+        echo json_encode($userReviews);
+        exit();
+      }
+
+      // Otherwise, fetch all reviews
+      $reviews = $review->fetchAll();
+      echo json_encode($reviews);
+      exit();
+
     } catch (PDOException $e) {
       echo json_encode([
         "success" => false,
@@ -63,6 +83,7 @@ switch ($method) {
 
   case 'POST':
     try {
+      $input['id_utilisateur'] = $_SESSION['id'];
       $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/assets/images/uploads/';
       if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0755, true);
@@ -140,7 +161,8 @@ switch ($method) {
       echo json_encode(["success" => false, "message" => "Missing review ID"]);
       exit();
     }
-    if ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] === $review->getOwnerId($reviewId)) {
+    $reviewOwner = $review->getOwnerId($_GET['id']);
+    if ($_SESSION['role'] === 'admin' || $_SESSION['id'] == $reviewOwner) {
       try {
         $success = $review->delete($_GET['id']);
         echo json_encode(["deleted" => $success]);

@@ -93,6 +93,14 @@ async function fetchReviewById(reviewId) {
   return await apiFetch(`api/reviews.php?id=${reviewId}`);
 }
 
+async function fetchReviewsByUser(userId) {
+  return await apiFetch(`api/reviews.php?user_id=${userId}`);
+}
+
+async function fetchFeedReviews(userId) {
+  return await apiFetch(`api/reviews.php?feed=1&user_id=${userId}`);
+}
+
 // UI
 function createReviewCard(review, readOnly = false) {
   let imgHtml = "";
@@ -251,8 +259,8 @@ function switchToEditMode(review) {
       const res = await updateReview(review.id, formData);
       if (res.success || res.updated) {
         showToast("Revue modifiée !");
-        fetchReviewById(userId).then(updateUserReviewList);
-        fetchReviews().then(updateFeedList);
+        fetchReviewsByUser(userId).then(updateUserReviewList);
+        fetchFeedReviews(userId).then(updateFeedList);
         bootstrap.Modal.getInstance(document.getElementById("reviewModal")).hide();
       } else {
         showToast(res.message || "Erreur lors de la modification", "error");
@@ -271,8 +279,8 @@ function handleDeleteReview(reviewId) {
       .then(res => {
         if (res.deleted || res.success) {
           showToast("Revue supprimée !");
-          fetchReviewById(userId).then(updateUserReviewList);
-          fetchReviews().then(updateFeedList);
+          fetchReviewsByUser(userId).then(updateUserReviewList);
+          fetchFeedReviews(userId).then(updateFeedList);
           bootstrap.Modal.getInstance(document.getElementById("reviewModal")).hide();
         } else {
           showToast(res.message || "Erreur lors de la suppression", "error");
@@ -321,8 +329,8 @@ function escapeHtml(text) {
 // Page Load
 document.addEventListener("DOMContentLoaded", function () {
   const userId = window.currentUserId;
-  fetchReviewById(userId).then(updateUserReviewList);
-  fetchReviews().then(updateFeedList);
+  fetchReviewsByUser(userId).then(updateUserReviewList);
+  fetchFeedReviews(userId).then(updateFeedList);
   // Create review modal
   const createForm = document.getElementById("createReviewForm");
   if (createForm) {
@@ -334,9 +342,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const result = await createReview(formData);
         if (result.success) {
           showToast("Review créée !");
-          fetchReviewById(userId).then(updateUserReviewList);
+          fetchReviewsByUser(userId).then(updateUserReviewList);
           prependReviewCard(result.review);
-          fetchReviews().then(updateFeedList);
+          fetchFeedReviews(userId).then(updateFeedList);
           bootstrap.Modal.getInstance(document.getElementById("createReviewModal")).hide();
         } else {
           showToast(result.message || "Erreur lors de la création", "error");
@@ -350,7 +358,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
 setInterval(async () => {
   try {
-    const latestReviews = await fetchReviews();
+    const latestReviews = await fetchFeedReviews(window.currentUserId);
+    if (!latestReviews || latestReviews.length === 0) {
+      console.log("Aucune nouvelle revue dans le flux.");
+      return;
+    }
+    console.log("Nouvelles revues récupérées :", latestReviews);
     updateFeedList(latestReviews);
   } catch (err) {
     console.error("Erreur lors de la récupération des dernières revues :", err);

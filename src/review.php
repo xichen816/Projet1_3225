@@ -8,17 +8,23 @@ class Review
         $this->pdo = $pdo;
     }
 
+    public function getOwnerId($reviewId)
+    {
+        $sql = 'SELECT id_utilisateur FROM revues WHERE id = :reviewId';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ? $result['id_utilisateur'] : null;
+    }
+
     public function fetchAll()
     {
-        $sql = "
-            SELECT r.id, r.titre, r.contenu, r.rating, r.date,
-                   u.id AS userid, u.nom AS username,
-                   c.id AS cafeid, c.nom AS cafename
-            FROM revues r
-            JOIN utilisateurs u ON r.id_utilisateur = u.id
-            JOIN cafes c ON r.id_cafe = c.id
-            ORDER BY r.date DESC
-        ";
+        $sql = "SELECT r.*, u.nom AS username, c.nom AS cafename
+                FROM revues r
+                JOIN utilisateurs u ON r.id_utilisateur = u.id
+                JOIN cafes c ON r.id_cafe = c.id
+                ORDER BY r.date DESC";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
         $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -47,25 +53,56 @@ class Review
 
     public function fetchById($id)
     {
-        $sql = "
-            SELECT r.id, r.titre, r.contenu, r.rating, r.date,
-                   u.id AS userid, u.nom AS username,
-                   c.id AS cafeid, c.nom AS cafename
-            FROM revues r
-            JOIN utilisateurs u ON r.id_utilisateur = u.id
-            JOIN cafes c ON r.id_cafe = c.id
-            WHERE r.id = :id
-        ";
+        $sql = "SELECT r.*, u.nom AS username, c.nom AS cafename
+                FROM revues r
+                JOIN utilisateurs u ON r.id_utilisateur = u.id
+                JOIN cafes c ON r.id_cafe = c.id
+                WHERE r.id = :id";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
+    public function fetchByUserId(int $userId)
+    {
+        $sql = "SELECT r.*, u.nom AS username, c.nom AS cafename
+            FROM revues r
+            JOIN utilisateurs u ON r.id_utilisateur = u.id
+            JOIN cafes c ON r.id_cafe = c.id
+            WHERE r.id_utilisateur = :userId
+            ORDER BY r.date DESC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':userId' => $userId]);
+        $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $reviewIds = array_column($reviews, 'id');
+        if ($reviewIds) {
+            $inQuery = implode(',', array_fill(0, count($reviewIds), '?'));
+            $stmtPhotos = $this->pdo->prepare(
+                "SELECT id_revue, filepath FROM photos_revue WHERE id_revue IN ($inQuery)"
+            );
+            $stmtPhotos->execute($reviewIds);
+            $photos = $stmtPhotos->fetchAll(PDO::FETCH_ASSOC);
+
+            $photosByReview = [];
+            foreach ($photos as $photo) {
+                $photosByReview[$photo['id_revue']][] = $photo;
+            }
+
+            foreach ($reviews as &$review) {
+                $review['photos'] = $photosByReview[$review['id']] ?? [];
+            }
+        }
+        return $reviews;
+
+    }
+
     public function fetchFeed($userId)
     {
         $sql = "
-        SELECT r.id, r.titre, r.contenu, r.description, r.rating, r.date,
-               r.id_utilisateur, u.nom AS auteur_nom, c.nom AS cafe_nom
+        SELECT r.id, r.titre, r.contenu, r.rating, r.date,
+               u.id AS userid, u.nom AS username,
+               c.id AS cafeid, c.nom AS cafename
         FROM revues r
         JOIN utilisateurs u ON r.id_utilisateur = u.id
         JOIN cafes c ON r.id_cafe = c.id
