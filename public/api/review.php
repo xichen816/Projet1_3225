@@ -98,6 +98,40 @@ class Review {
         return $review;
     }
 
+    public function fetchByUserId(int $userId)
+    {
+        $sql = "SELECT r.*, u.nom AS username, c.nom AS cafename
+            FROM revues r
+            JOIN utilisateurs u ON r.id_utilisateur = u.id
+            JOIN cafes c ON r.id_cafe = c.id
+            WHERE r.id_utilisateur = :userId
+            ORDER BY r.date DESC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':userId' => $userId]);
+        $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $reviewIds = array_column($reviews, 'id');
+        if ($reviewIds) {
+            $inQuery = implode(',', array_fill(0, count($reviewIds), '?'));
+            $stmtPhotos = $this->pdo->prepare(
+                "SELECT id_revue, filepath FROM photos_revue WHERE id_revue IN ($inQuery)"
+            );
+            $stmtPhotos->execute($reviewIds);
+            $photos = $stmtPhotos->fetchAll(PDO::FETCH_ASSOC);
+
+            $photosByReview = [];
+            foreach ($photos as $photo) {
+                $photosByReview[$photo['id_revue']][] = $photo;
+            }
+
+            foreach ($reviews as &$review) {
+                $review['photos'] = $photosByReview[$review['id']] ?? [];
+            }
+        }
+        return $reviews;
+
+    }
+
     public function fetchFeed($userId)
     {
         $sql = "
