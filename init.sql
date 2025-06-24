@@ -43,7 +43,7 @@ CREATE TABLE revues (
 
 
 CREATE TABLE revues_categories (
-    PRIMARY KEY (id_revue, id_categorie),
+    id INT AUTO_INCREMENT PRIMARY KEY,
     id_categorie INT NOT NULL,
     id_revue INT NOT NULL,
     FOREIGN KEY (id_categorie) REFERENCES categories(id) ON DELETE CASCADE,

@@ -24,8 +24,7 @@ INSERT INTO utilisateurs (nom, email, mot_de_passe, role, token) VALUES
   ('Alice Dupont','alice@example.com','$2y$10$KIXD2zvIwUqJteQWnB5Uu','utilisateur',NULL),
   ('Bob Martin','bob@example.com','$2y$10$abc123DEFghIjKlmNopQr','utilisateur',NULL),
   ('Carol Durand','carol@example.com','$2y$10$QrStUvWxYzAbCdEfGhIjK','admin',NULL),
-  ('David Lefevre','david@example.com','$2y$10$1234567890abcdefgHIJ','utilisateur',NULL),
-  ('Jean Talon','jean@example.com','$2y$10$Cw5xlhPcAxqDlvKt/cdzQ.sfpk6ZqmLaZUMaW6h0RLrxqsNwHHxvC','utilisateur',NULL);
+  ('David Lefevre','david@example.com','$2y$10$1234567890abcdefgHIJ','utilisateur',NULL);
 
 -- 5) CAFES
 INSERT INTO cafes (nom, adresse, categories, telephone, email, site_web) VALUES
@@ -53,9 +52,7 @@ INSERT INTO categories (nom) VALUES
 INSERT INTO revues (id_cafe, id_utilisateur, rating, titre, contenu) VALUES
   (1, 1, 5,  'Excellent Espresso',      'Un espresso parfait, crème onctueuse.'),
   (1, 2, 4,  'Bon mais cher',           'Très bon café, un peu cher pour la taille.'),
-  (2, 1, 4,  'Super Cappuccino',        'Texture impeccable, service rapide.'),
-  (3, 1, 5,  'Café du Coin',            'Un café chaleureux avec une ambiance conviviale.');
-
+  (2, 1, 4,  'Super Cappuccino',        'Texture impeccable, service rapide.');
 
 -- 8) REVUES_CATEGORIES (liaisons N–N)
 INSERT INTO revues_categories (id_categorie, id_revue) VALUES
@@ -70,9 +67,7 @@ INSERT INTO revues_categories (id_categorie, id_revue) VALUES
   (2, 3),  -- Great for Lunch → revue 3
   (4, 1),  -- Great for Dinner → revue 1
   (5, 2),  -- Great for Dessert → revue 2
-  (6, 3),  -- Great for Coffee Lovers → revue 3;
-  (2, 4),  -- Great for Lunch → revue 4
-  (3, 4);  -- Great for Groups → revue 4
+  (6, 3);  -- Great for Coffee Lovers → revue 3;
 
 -- 9) COMMENTAIRES
 INSERT INTO commentaires (id_revue, id_utilisateur, contenu) VALUES
