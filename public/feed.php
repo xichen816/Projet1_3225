@@ -47,10 +47,11 @@ $cafes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-bs-toggle="dropdown"
                         aria-expanded="false">
-                        <i class="bi bi-list"></i> <!-- or just “Menu” -->
+                        <i class="bi bi-list"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                        <li><a class="dropdown-item" href="profile.php">Profil</a></li>
+                        <li><a class="dropdown-item" href="../public/profile.php">Profil</a></li>
+                        <li><a class="dropdown-item" href="../public/index.php">Explore</a></li>
                         <!-- etc… -->
                     </ul>
                 </li>
