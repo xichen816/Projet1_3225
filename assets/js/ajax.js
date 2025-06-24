@@ -1,4 +1,4 @@
-// Toast
+// Toast Helper
 function showToast(message, type = "info") {
   const container = document.getElementById("message");
   if (container) {
@@ -10,6 +10,32 @@ function showToast(message, type = "info") {
   } else {
     console[type === "error" ? "error" : "log"](message);
   }
+}
+
+// Escape Helper
+function escapeHtml(text) {
+  return String(text).replace(
+    /[&<>"']/g,
+    (s) =>
+      ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      }[s])
+  );
+}
+
+// Date Helper
+function formatDate(dateString) {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 // Fetch
@@ -36,7 +62,10 @@ async function loginUser(email, password) {
   formData.append("password", password);
 
   try {
-    const data = await apiFetch("api/connexion.php", { method: "POST", body: formData });
+    const data = await apiFetch("api/connexion.php", {
+      method: "POST",
+      body: formData,
+    });
     if (data.success) {
       showToast("Bienvenue, " + data.nom + "!");
       window.location.href = "index.php";
@@ -61,7 +90,10 @@ async function signupUser(nom, email, password) {
   formData.append("password", password);
 
   try {
-    const data = await apiFetch("api/inscription.php", { method: "POST", body: formData });
+    const data = await apiFetch("api/inscription.php", {
+      method: "POST",
+      body: formData,
+    });
     if (data.success) {
       showToast("Inscription réussie!");
       window.location.href = "connexion.php";
@@ -105,13 +137,20 @@ async function fetchFeedReviews(userId) {
 function createReviewCard(review, readOnly = false) {
   let imgHtml = "";
   if (review.thumbnail) {
-    imgHtml = `<img src="${escapeHtml(review.thumbnail)}" class="card-img-top" alt="Thumbnail">`;
+    imgHtml = `<img src="${escapeHtml(
+      review.thumbnail
+    )}" class="card-img-top" alt="Thumbnail">`;
   } else if (review.photos && review.photos.length > 0) {
-    imgHtml = `<img src="${escapeHtml(review.photos[0].filepath)}" class="card-img-top" alt="Review photo">`;
+    imgHtml = `<img src="${escapeHtml(
+      review.photos[0].filepath
+    )}" class="card-img-top" alt="Review photo">`;
   }
 
   let controls = "";
-  if (!readOnly && String(review.id_utilisateur) === String(window.currentUserId)) {
+  if (
+    !readOnly &&
+    String(review.id_utilisateur) === String(window.currentUserId)
+  ) {
     controls = `<button class="btn btn-danger btn-sm float-end" onclick="deleteReview(${review.id})">Supprimer</button>`;
   }
 
@@ -127,10 +166,14 @@ function createReviewCard(review, readOnly = false) {
         <div class="mb-1 text-muted small">
           par ${escapeHtml(author)} | ${escapeHtml(cafe)}
         </div>
-        <div class="mb-2 text-truncate">${escapeHtml(review.description || review.contenu || "")}</div>
+        <div class="mb-2 text-truncate">${escapeHtml(
+          review.description || review.contenu || ""
+        )}</div>
         <div class="mt-auto d-flex align-items-center justify-content-between">
           <span class="badge bg-primary">${review.rating}/5</span>
-          <button class="btn btn-sm btn-primary open-review-modal" data-review-id="${review.id}">Voir plus</button>
+          <button class="btn btn-sm btn-primary open-review-modal" data-review-id="${
+            review.id
+          }">Voir plus</button>
           ${controls}
         </div>
       </div>
@@ -138,6 +181,54 @@ function createReviewCard(review, readOnly = false) {
   `;
 }
 
+function createReviewTile(review) {
+  const imgSrc =
+    review.thumbnail ||
+    (review.photos && review.photos[0] && review.photos[0].filepath);
+  const title = escapeHtml(review.titre || review.title || "Untitled Review");
+  const cafeName = escapeHtml(
+    review.cafe_nom ||
+      review.cafename ||
+      review.cafe_name ||
+      review.cafe ||
+      "Unknown Cafe"
+  );
+  const authorName = escapeHtml(
+    review.auteur_nom ||
+      review.username ||
+      review.nom ||
+      review.author ||
+      review.author_name ||
+      "Anonymous"
+  );
+  const description = escapeHtml(
+    review.description || review.contenu || review.content || ""
+  );
+  const rating = review.rating || 0;
+  const reviewDate = formatDate(
+    review.created_at || review.date || review.createdAt || ""
+  );
+  const contentClass = imgSrc ? "card-content-overlay" : "card-content-solid";
+  const noImagePlaceholder = !imgSrc
+    ? '<div class="no-image-placeholder"></div>'
+    : "";
+  return `
+    <div class="rating-badge">★ ${rating}/5</div>
+    ${noImagePlaceholder}
+    <div class="${contentClass}">
+        <div class="review-title">${title}</div>
+        <div class="cafe-info">
+            <div class="cafe-name">${cafeName}</div>
+            <div class="author-name">by ${authorName}</div>
+        </div>
+        <div class="review-description">${description}</div>
+        <div class="card-footer">
+            <div class="review-date">${reviewDate}</div>
+            <a href="#" class="read-more">Read More</a>
+        </div>
+    </div>
+  `;
+}
 
 function updateFeedList(reviews) {
   const list = document.querySelector("#feed-list .review-cards-row");
@@ -180,11 +271,10 @@ function updateUserReviewList(reviews) {
     return;
   }
 
-  reviews.forEach(r => {
+  reviews.forEach((r) => {
     list.insertAdjacentHTML("beforeend", createReviewCard(r));
   });
 }
-
 
 function prependReviewCard(review) {
   const reviewList = document.getElementById("feed-list");
@@ -214,8 +304,10 @@ function openReviewModal(review) {
       <button type="button" class="btn btn-danger" id="deleteReviewBtn">Supprimer</button>
       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
     `;
-    document.getElementById("editReviewBtn").onclick = () => switchToEditMode(review);
-    document.getElementById("deleteReviewBtn").onclick = () => handleDeleteReview(review.id);
+    document.getElementById("editReviewBtn").onclick = () =>
+      switchToEditMode(review);
+    document.getElementById("deleteReviewBtn").onclick = () =>
+      handleDeleteReview(review.id);
   } else {
     modalFooter.innerHTML = `<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>`;
   }
@@ -231,15 +323,21 @@ function switchToEditMode(review) {
     <form id="editReviewForm" enctype="multipart/form-data">
       <div class="mb-3">
         <label for="editReviewTitle" class="form-label">Titre</label>
-        <input type="text" class="form-control" id="editReviewTitle" name="titre" value="${escapeHtml(review.titre)}" required>
+        <input type="text" class="form-control" id="editReviewTitle" name="titre" value="${escapeHtml(
+          review.titre
+        )}" required>
       </div>
       <div class="mb-3">
         <label for="editReviewContent" class="form-label">Contenu</label>
-        <textarea class="form-control" id="editReviewContent" name="contenu" required>${escapeHtml(review.contenu)}</textarea>
+        <textarea class="form-control" id="editReviewContent" name="contenu" required>${escapeHtml(
+          review.contenu
+        )}</textarea>
       </div>
       <div class="mb-3">
         <label for="editReviewRating" class="form-label">Note (1-5)</label>
-        <input type="number" class="form-control" id="editReviewRating" name="rating" min="1" max="5" value="${review.rating}" required>
+        <input type="number" class="form-control" id="editReviewRating" name="rating" min="1" max="5" value="${
+          review.rating
+        }" required>
       </div>
       <div class="mb-3">
         <label for="editReviewPhotos" class="form-label">Ajouter de nouvelles photos (max 5)</label>
@@ -261,7 +359,9 @@ function switchToEditMode(review) {
         showToast("Revue modifiée !");
         fetchReviewsByUser(userId).then(updateUserReviewList);
         fetchFeedReviews(userId).then(updateFeedList);
-        bootstrap.Modal.getInstance(document.getElementById("reviewModal")).hide();
+        bootstrap.Modal.getInstance(
+          document.getElementById("reviewModal")
+        ).hide();
       } else {
         showToast(res.message || "Erreur lors de la modification", "error");
       }
@@ -276,17 +376,21 @@ function handleDeleteReview(reviewId) {
   const userId = window.currentUserId;
   if (confirm("Êtes-vous sûr de vouloir supprimer cette revue ?")) {
     deleteReview(reviewId)
-      .then(res => {
+      .then((res) => {
         if (res.deleted || res.success) {
           showToast("Revue supprimée !");
           fetchReviewsByUser(userId).then(updateUserReviewList);
           fetchFeedReviews(userId).then(updateFeedList);
-          bootstrap.Modal.getInstance(document.getElementById("reviewModal")).hide();
+          bootstrap.Modal.getInstance(
+            document.getElementById("reviewModal")
+          ).hide();
         } else {
           showToast(res.message || "Erreur lors de la suppression", "error");
         }
       })
-      .catch(err => showToast(`Erreur lors de la suppression : ${err.message}`, "error"));
+      .catch((err) =>
+        showToast(`Erreur lors de la suppression : ${err.message}`, "error")
+      );
   }
 }
 
@@ -300,11 +404,17 @@ function getReviewPhotosCarouselHtml(photos) {
   return `
     <div id="${carouselId}" class="carousel slide mb-2" data-bs-ride="carousel">
       <div class="carousel-inner">
-        ${photos.map((photo, i) => `
+        ${photos
+          .map(
+            (photo, i) => `
           <div class="carousel-item${i === 0 ? " active" : ""}">
-            <img src="${photo.filepath}" class="d-block w-100" alt="Photo ${i + 1}">
+            <img src="${photo.filepath}" class="d-block w-100" alt="Photo ${
+              i + 1
+            }">
           </div>
-        `).join("")}
+        `
+          )
+          .join("")}
       </div>
       <button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -318,12 +428,129 @@ function getReviewPhotosCarouselHtml(photos) {
   `;
 }
 
-// Escape Helper
-function escapeHtml(text) {
-  return String(text)
-    .replace(/[&<>"']/g, s => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-    }[s]));
+function createPaginatedGrid({
+  gridId,
+  reviews,
+  createCardHtml,
+  perPage = 15,
+  onCardClick = null,
+}) {
+  let currentPage = 1;
+  let totalPages = Math.ceil(reviews.length / perPage);
+
+  function renderGrid() {
+    const grid = document.getElementById(gridId);
+    if (!grid) return;
+    grid.innerHTML = "";
+
+    const start = (currentPage - 1) * perPage;
+    const items = reviews.slice(start, start + perPage);
+
+    items.forEach((review) => {
+      const card = document.createElement("div");
+      card.className = "review-card";
+      card.innerHTML = createCardHtml(review);
+
+      if (onCardClick) {
+        card.onclick = (e) => {
+          e.preventDefault();
+          onCardClick(review);
+        };
+      }
+
+      const imgSrc =
+        review.thumbnail ||
+        (review.photos && review.photos[0] && review.photos[0].filepath);
+      if (imgSrc) card.classList.add("has-image");
+      else card.classList.add("no-image");
+
+      grid.appendChild(card);
+    });
+
+    // Fill empty slots for grid structure
+    const emptySlots = perPage - items.length;
+    for (let i = 0; i < emptySlots; i++) {
+      const card = document.createElement("div");
+      card.className = "review-card empty";
+      grid.appendChild(card);
+    }
+  }
+
+  // TODO
+  function updatePaginationUI(pageSelector, dotSelector, infoSelector) {
+    // pageSelector: {prev: '#prev-page', next: '#next-page'}
+    // dotSelector: '.page-dot'
+    // infoSelector: {current: '#current-page', total: '#total-pages'}
+
+    if (dotSelector) {
+      const dots = document.querySelectorAll(dotSelector);
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle("active", idx === currentPage - 1);
+        dot.style.display = idx < totalPages ? "block" : "none";
+      });
+    }
+
+    if (infoSelector) {
+      if (infoSelector.current)
+        document.querySelector(infoSelector.current).textContent = currentPage;
+      if (infoSelector.total)
+        document.querySelector(infoSelector.total).textContent = totalPages;
+    }
+
+    if (pageSelector) {
+      if (pageSelector.prev)
+        document.querySelector(pageSelector.prev).disabled = currentPage === 1;
+      if (pageSelector.next)
+        document.querySelector(pageSelector.next).disabled =
+          currentPage === totalPages;
+    }
+  }
+
+  function setupPagination(pageSelector, dotSelector, infoSelector) {
+
+    if (pageSelector.prev) {
+      document.querySelector(pageSelector.prev).onclick = () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderGrid();
+          updatePaginationUI(pageSelector, dotSelector, infoSelector);
+        }
+      };
+    }
+    if (pageSelector.next) {
+      document.querySelector(pageSelector.next).onclick = () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderGrid();
+          updatePaginationUI(pageSelector, dotSelector, infoSelector);
+        }
+      };
+    }
+    if (dotSelector) {
+      document.querySelectorAll(dotSelector).forEach((dot, idx) => {
+        dot.onclick = () => {
+          if (idx < totalPages) {
+            currentPage = idx + 1;
+            renderGrid();
+            updatePaginationUI(pageSelector, dotSelector, infoSelector);
+          }
+        };
+      });
+    }
+  }
+
+  return {
+    render: renderGrid,
+    setupPagination: setupPagination,
+    updatePaginationUI: updatePaginationUI,
+    updateReviews: function (newReviews) {
+      reviews = newReviews;
+      totalPages = Math.ceil(reviews.length / perPage);
+      currentPage = 1;
+      renderGrid();
+    },
+    getCurrentPage: () => currentPage,
+  };
 }
 
 // Page Load
@@ -337,7 +564,7 @@ document.addEventListener("DOMContentLoaded", function () {
     createForm.onsubmit = async function (e) {
       e.preventDefault();
       const formData = new FormData(this);
-      formData.append('id_utilisateur', window.currentUserId);
+      formData.append("id_utilisateur", window.currentUserId);
       try {
         const result = await createReview(formData);
         if (result.success) {
@@ -345,7 +572,9 @@ document.addEventListener("DOMContentLoaded", function () {
           fetchReviewsByUser(userId).then(updateUserReviewList);
           prependReviewCard(result.review);
           fetchFeedReviews(userId).then(updateFeedList);
-          bootstrap.Modal.getInstance(document.getElementById("createReviewModal")).hide();
+          bootstrap.Modal.getInstance(
+            document.getElementById("createReviewModal")
+          ).hide();
         } else {
           showToast(result.message || "Erreur lors de la création", "error");
         }
