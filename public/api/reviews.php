@@ -9,7 +9,7 @@ error_reporting(E_ALL);
 
 header('Content-Type: application/json');
 require_once '../../config/config.php';
-require_once '../../src/review.php';
+require_once '../api/review.php';
 
 $method = $_SERVER['REQUEST_METHOD'];
 $review = new Review($pdo);
