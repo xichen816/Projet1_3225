@@ -55,8 +55,8 @@ class Review {
         $categories = $stmtCategories->fetchAll(PDO::FETCH_ASSOC);
 
         $categoriesByReview = [];
-        foreach ($categories as $categorie) {
-            $categoriesByReview[$categorie['id_revue']][] = $categorie['nom'];
+        foreach ($categories as $category) {
+            $categoriesByReview[$category['id_revue']][] = $category['nom'];
         }
 
         foreach ($reviews as &$review) {
@@ -161,9 +161,28 @@ class Review {
                 $photosByReview[$photo['id_revue']][] = $photo;
             }
         }
+
+        $categoriesByReview = [];
+        if ($reviewIds) {
+            $inQuery = implode(',', array_fill(0, count($reviewIds), '?'));
+            $stmtCategories = $this->pdo->prepare("
+                SELECT rc.id_revue, cat.nom
+                FROM revues_categories rc
+                JOIN categories cat ON rc.id_categorie = cat.id
+                WHERE rc.id_revue IN ($inQuery)
+            ");
+            $stmtCategories->execute($reviewIds);
+            $categories = $stmtCategories->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($categories as $category) {
+                $categoriesByReview[$category['id_revue']][] = $category['nom'];
+            }
+        }
+
         foreach ($reviews as &$review) {
             $review['thumbnail'] = $this->fetchThumbnailById($review['id']);
             $review['photos'] = $photosByReview[$review['id']] ?? [];
+            $review['categories'] = $categoriesByReview[$review['id']] ?? [];
         }
         return $reviews;
     }
@@ -215,8 +234,8 @@ class Review {
                 }
             }
 
-            if (!empty($data['categorie'])) {
-                $categories = $data['categorie'];
+            if (!empty($data['categories'])) {
+                $categories = $data['categories'];
                 $sqlCategory = "INSERT INTO revues_categories (id_revue, id_categorie) VALUES (:id_revue, :id_categorie)";
                 $stmtCategory = $this->pdo->prepare($sqlCategory);
 
@@ -246,12 +265,12 @@ class Review {
             ':id' => $id
         ]);
 
-        if (!empty($data['categorie'])) {
+        if (!empty($data['categories'])) {
             $deleteStmt = $this->pdo->prepare("DELETE FROM revues_categories WHERE id_revue = :id_revue");
             $deleteStmt->execute([':id_revue' => $id]);
 
             $insertStmt = $this->pdo->prepare("INSERT INTO revues_categories (id_revue, id_categorie) VALUES (:id_revue, :id_categorie)");
-            foreach ($data['categorie'] as $categoryId) {
+            foreach ($data['categories'] as $categoryId) {
                 $insertStmt->execute([
                     ':id_revue' => $id,
                     ':id_categorie' => $categoryId
