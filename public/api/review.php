@@ -15,6 +15,50 @@ class Review {
         return $result ? $result['id_utilisateur'] : null;
     }
 
+    private function getPhotosByReviewIds(array $reviewIds, bool $onlyPrimary = false): array {
+        if (empty($reviewIds)) return [];
+
+        $inQuery = implode(',', array_fill(0, count($reviewIds), '?'));
+        $sql = "SELECT id_revue, filepath FROM photos_revue WHERE id_revue IN ($inQuery)";
+        if ($onlyPrimary) {
+            $sql .= " AND is_primary = TRUE";
+        }
+
+        $stmtPhotos = $this->pdo->prepare($sql);
+        $stmtPhotos->execute($reviewIds);
+        $photos = $stmtPhotos->fetchAll(PDO::FETCH_ASSOC);
+
+        $photosByReview = [];
+        foreach ($photos as $photo) {
+            $photosByReview[$photo['id_revue']][] = $photo;
+        }
+
+        return $photosByReview;
+    }
+
+    private function getCategoriesByReviewIds(array $reviewIds): array {
+        if (empty($reviewIds)) return [];
+
+        $inQuery = implode(',', array_fill(0, count($reviewIds), '?'));
+        $sql = "
+            SELECT rc.id_revue, cat.nom
+            FROM revues_categories rc
+            JOIN categories cat ON rc.id_categorie = cat.id
+            WHERE rc.id_revue IN ($inQuery)
+        ";
+
+        $stmtCategories = $this->pdo->prepare($sql);
+        $stmtCategories->execute($reviewIds);
+        $categories = $stmtCategories->fetchAll(PDO::FETCH_ASSOC);
+
+        $categoriesByReview = [];
+        foreach ($categories as $category) {
+            $categoriesByReview[$category['id_revue']][] = $category['nom'];
+        }
+
+        return $categoriesByReview;
+    }
+
     public function fetchAll() {
     $sql = "
         SELECT r.id, r.titre, r.contenu, r.rating, r.date,
@@ -30,42 +74,16 @@ class Review {
     $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $reviewIds = array_column($reviews, 'id');
 
-    if ($reviewIds) {
-            $inQuery = implode(',', array_fill(0, count($reviewIds), '?'));
-            $stmtPhotos = $this->pdo->prepare(
-                "SELECT id_revue, filepath FROM photos_revue WHERE id_revue IN ($inQuery)"
-            );
-            $stmtPhotos->execute($reviewIds);
-            $photos = $stmtPhotos->fetchAll(PDO::FETCH_ASSOC);
+    $photosByReview = $this->getPhotosByReviewIds($reviewIds);
+    $categoriesByReview = $this->getCategoriesByReviewIds($reviewIds);
 
-            // Map photos to their reviews
-            $photosByReview = [];
-            foreach ($photos as $photo) {
-                $photosByReview[$photo['id_revue']][] = $photo;
-            }
-        }
-    
-        $stmtCategories = $this->pdo->prepare("
-            SELECT rc.id_revue, cat.nom
-            FROM revues_categories rc
-            JOIN categories cat ON rc.id_categorie = cat.id
-            WHERE rc.id_revue IN ($inQuery)"
-        );
-        $stmtCategories->execute($reviewIds);
-        $categories = $stmtCategories->fetchAll(PDO::FETCH_ASSOC);
-
-        $categoriesByReview = [];
-        foreach ($categories as $category) {
-            $categoriesByReview[$category['id_revue']][] = $category['nom'];
+    foreach ($reviews as &$review) {
+            $id = $review['id'];
+            $review['photos'] = $photosByReview[$id] ?? [];
+            $review['categories'] = $categoriesByReview[$id] ?? [];
         }
 
-        foreach ($reviews as &$review) {
-                $id = $review['id'];
-                $review['photos'] = $photosByReview[$id] ?? [];
-                $review['categories'] = $categoriesByReview[$id] ?? [];
-            }
-
-        return $reviews;
+    return $reviews;
     }
 
     public function fetchById($id)
@@ -83,18 +101,6 @@ class Review {
         $stmt->execute([':id' => $id]);
         $review = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($review) {
-            $catSql = "
-            SELECT cat.id, cat.nom
-            FROM categories cat
-            JOIN revues_categories rc ON cat.id = rc.id_categorie
-            WHERE rc.id_revue = :id_revue
-            ";
-            $catStmt = $this->pdo->prepare($catSql);
-            $catStmt->execute([':id_revue' => $id]);
-            $review['categories'] = $catStmt->fetchAll(PDO::FETCH_ASSOC);
-        }
-
         return $review;
     }
 
@@ -109,25 +115,14 @@ class Review {
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':userId' => $userId]);
         $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
         $reviewIds = array_column($reviews, 'id');
-        if ($reviewIds) {
-            $inQuery = implode(',', array_fill(0, count($reviewIds), '?'));
-            $stmtPhotos = $this->pdo->prepare(
-                "SELECT id_revue, filepath FROM photos_revue WHERE id_revue IN ($inQuery)"
-            );
-            $stmtPhotos->execute($reviewIds);
-            $photos = $stmtPhotos->fetchAll(PDO::FETCH_ASSOC);
 
-            $photosByReview = [];
-            foreach ($photos as $photo) {
-                $photosByReview[$photo['id_revue']][] = $photo;
-            }
+        $photosByReview = $this->getPhotosByReviewIds($reviewIds);
 
-            foreach ($reviews as &$review) {
-                $review['photos'] = $photosByReview[$review['id']] ?? [];
-            }
+        foreach ($reviews as &$review) {
+            $review['photos'] = $photosByReview[$review['id']] ?? [];
         }
+        
         return $reviews;
 
     }
@@ -149,35 +144,9 @@ class Review {
 
         // Attach photos as before
         $reviewIds = array_column($reviews, 'id');
-        $photosByReview = [];
-        if ($reviewIds) {
-            $inQuery = implode(',', array_fill(0, count($reviewIds), '?'));
-            $stmtPhotos = $this->pdo->prepare(
-                "SELECT id_revue, filepath FROM photos_revue WHERE id_revue IN ($inQuery) AND is_primary = TRUE"
-            );
-            $stmtPhotos->execute($reviewIds);
-            $photos = $stmtPhotos->fetchAll(PDO::FETCH_ASSOC);
-            foreach ($photos as $photo) {
-                $photosByReview[$photo['id_revue']][] = $photo;
-            }
-        }
 
-        $categoriesByReview = [];
-        if ($reviewIds) {
-            $inQuery = implode(',', array_fill(0, count($reviewIds), '?'));
-            $stmtCategories = $this->pdo->prepare("
-                SELECT rc.id_revue, cat.nom
-                FROM revues_categories rc
-                JOIN categories cat ON rc.id_categorie = cat.id
-                WHERE rc.id_revue IN ($inQuery)
-            ");
-            $stmtCategories->execute($reviewIds);
-            $categories = $stmtCategories->fetchAll(PDO::FETCH_ASSOC);
-
-            foreach ($categories as $category) {
-                $categoriesByReview[$category['id_revue']][] = $category['nom'];
-            }
-        }
+        $photosByReview = $this->getPhotosByReviewIds($reviewIds, true);
+        $categoriesByReview = $this->getCategoriesByReviewIds($reviewIds);
 
         foreach ($reviews as &$review) {
             $review['thumbnail'] = $this->fetchThumbnailById($review['id']);
@@ -222,10 +191,11 @@ class Review {
 
             // If there are photos, insert each into photos_revue
             if (!empty($data['photos'])) {
-                foreach ($data['photos'] as $i => $photo) {
-                    $stmtPhoto = $this->pdo->prepare(
+                $stmtPhoto = $this->pdo->prepare(
                         "INSERT INTO photos_revue (id_revue, filepath, is_primary) VALUES (:id_revue, :filepath, :is_primary)"
                     );
+                    
+                foreach ($data['photos'] as $i => $photo) {
                     $stmtPhoto->execute([
                         ':id_revue' => $reviewId,
                         ':filepath' => $photo['filepath'],
