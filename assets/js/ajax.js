@@ -563,6 +563,14 @@ document.addEventListener("DOMContentLoaded", function () {
   if (createForm) {
     createForm.onsubmit = async function (e) {
       e.preventDefault();
+      document.querySelectorAll('input[name="categories[]"]').forEach(el => el.remove());
+      selectedCategories.forEach((label, id) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'categories[]';
+        input.value = id;
+        this.appendChild(input);
+      })
       const formData = new FormData(this);
       formData.append("id_utilisateur", window.currentUserId);
       try {

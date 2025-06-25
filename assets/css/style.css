@@ -70,6 +70,24 @@ body {
   font-size: 0.9em;
 }
 
+select.hidden {
+    display: none !important;
+}
+
+.category-tag {
+    position: relative;
+    display: inline-block;
+    padding-right: 1.5rem;
+}
+
+.category-tag .btn-close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 0.6rem;
+    margin: 0.25rem;
+}
+
 @media (max-width: 992px) {
   .rectangle-card {
     aspect-ratio: 2/1;

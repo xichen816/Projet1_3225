@@ -20,6 +20,8 @@ $userFeed = $review->fetchFeed($userId);
 $userReviews = $review->fetchById($userId);
 $stmt = $pdo->query("SELECT id, nom FROM cafes");
 $cafes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$catstmt = $pdo->query("SELECT id, nom FROM categories");
+$categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 <!DOCTYPE html>
@@ -74,7 +76,7 @@ $cafes = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
             <!-- User's Reviews -->
             <div class="col-md-6 ps-4">
-                <h3>Mes Revue</h3>
+                <h3>Mes Revues</h3>
 
                 <div id="user-review-list" class="h-100 overflow-auto">
 
@@ -131,6 +133,16 @@ $cafes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <option value="<?= $cafe['id'] ?>"><?= htmlspecialchars($cafe['nom']) ?></option>
                                 <?php endforeach; ?>
                             </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoryInput" class="form-label">Catégories</label>
+                            <input type="text" class="form-control" id="categoryInput" placeholder="Ajouter une catégorie" readonly />
+                            <select name="categories[]" id="categorySelect" class="form-select hidden" multiple>
+                                <?php foreach ($categories as $cat): ?>
+                                    <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nom']) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div id="selectedCategoryTags" class="mt-2 d-flex flex-wrap gap-2"></div>
                         </div>
                         <div class="mb-3">
                             <label for="reviewTitle" class="form-label">Titre de la Revue</label>
@@ -192,6 +204,46 @@ $cafes = $stmt->fetchAll(PDO::FETCH_ASSOC);
             const modal = new bootstrap.Modal(document.getElementById("createReviewModal"));
             modal.show();
         });
+
+        const categoryInput = document.getElementById('categoryInput');
+        const categorySelect = document.getElementById('categorySelect');
+        const selectedTagsContainer = document.getElementById('selectedCategoryTags');
+        const selectedCategories = new Map();
+
+        // Afficher le select au clic sur l'input
+        categoryInput.addEventListener('click', () => {
+            categorySelect.classList.remove('hidden');
+            categorySelect.focus();
+        });
+
+        categorySelect.addEventListener('change', () => {
+            Array.from(categorySelect.selectedOptions).forEach(option => {
+                if (!selectedCategories.has(option.value)) {
+                    selectedCategories.set(option.value, option.text);
+
+                    const tag = document.createElement('span');
+                    tag.className = 'badge bg-primary category-tag';
+                    tag.textContent = option.text;
+
+                    const removeBtn = document.createElement('button');
+                    removeBtn.type = 'button';
+                    removeBtn.className = 'btn-close btn-close-white';
+                    removeBtn.onclick = () => {
+                        selectedCategories.delete(option.value);
+                        tag.remove();
+                        option.selected = false;
+                        categoryInput.value = Array.from(selectedCategories.values()).join(', ');
+                    };
+
+                    tag.appendChild(removeBtn);
+                    selectedTagsContainer.appendChild(tag);
+                }
+            });
+
+            categorySelect.classList.add('hidden');
+            categoryInput.value = Array.from(selectedCategories.values()).join(', ');
+        });
+
     </script>
 
     <div id="message"></div>
