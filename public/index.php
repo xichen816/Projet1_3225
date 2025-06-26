@@ -48,7 +48,7 @@ require_once "../includes/auth.php";
               <li>
                 <hr class="dropdown-divider">
               </li>
-              <li><a class="dropdown-item" id="logout" href="../public/decconnexion.php">Déconnexion</a></li>
+              <li><a class="dropdown-item" id="logout" href="../public/api/deconnexion.php">Déconnexion</a></li>
             </ul>
           </li>
         </div>

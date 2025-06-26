@@ -173,6 +173,19 @@ class Review {
         return $photo ? $photo['filepath'] : null;
     }
 
+    public function fetchCategoriesById($id)
+    {
+        $sql = "
+            SELECT cat.id, cat.nom
+            FROM revues_categories rc
+            JOIN categories cat ON rc.id_categorie = cat.id
+            WHERE rc.id_revue = :id
+        ";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function create($data) {
         $this->pdo->beginTransaction();
         try {

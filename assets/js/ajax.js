@@ -134,7 +134,7 @@ async function fetchFeedReviews(userId) {
 }
 
 // UI
-function createReviewCard(review, readOnly = false) {
+function createReviewCard(review, readOnly = false, showCategories = true) {
   let imgHtml = "";
   if (review.thumbnail) {
     imgHtml = `<img src="${escapeHtml(
@@ -144,6 +144,21 @@ function createReviewCard(review, readOnly = false) {
     imgHtml = `<img src="${escapeHtml(
       review.photos[0].filepath
     )}" class="card-img-top" alt="Review photo">`;
+  }
+
+  let categories = "";
+  if (review.categories && review.categories.length > 0) {
+    const categoryTags = review.categories
+      .map(
+        (cat) =>
+          `<span class="badge bg-secondary me-1 mb-1">${escapeHtml(cat)}</span>`
+      )
+      .join(" ");
+    categories = `
+      <div class="mb-3">
+        <label class="form-label">Catégories</label>
+        <div class="d-flex flex-wrap gap-2">${categoryTags}</div>
+      </div>`;
   }
 
   let controls = "";
@@ -166,6 +181,10 @@ function createReviewCard(review, readOnly = false) {
         <div class="mb-1 text-muted small">
           par ${escapeHtml(author)} | ${escapeHtml(cafe)}
         </div>
+        ${showCategories && review.categories && review.categories.length > 0 ? `
+        <div class="mb-1">
+          ${review.categories.map(cat => `<span class="badge bg-secondary me-1">${escapeHtml(cat)}</span>`).join('')}
+        </div>` : ''}
         <div class="mb-2 text-truncate">${escapeHtml(
           review.description || review.contenu || ""
         )}</div>
@@ -250,9 +269,9 @@ function updateFeedList(reviews) {
   reviews.forEach((r, i) => {
     let cardHtml;
     if (i === 0 && odd) {
-      cardHtml = `<div class="col-12">${createReviewCard(r)}</div>`;
+      cardHtml = `<div class="col-12">${createReviewCard(r, false, true)}</div>`;
     } else {
-      cardHtml = `<div class="col-6">${createReviewCard(r)}</div>`;
+      cardHtml = `<div class="col-6">${createReviewCard(r, false, false)}</div>`;
     }
     list.insertAdjacentHTML("beforeend", cardHtml);
   });
@@ -292,9 +311,20 @@ function openReviewModal(review) {
 
   modalTitle.textContent = review.titre;
 
-  modalBody.innerHTML = `
-    ${getReviewPhotosCarouselHtml(review.photos)}
+  let categoriesHtml = "";
+    if (review.categories && review.categories.length > 0) {
+      categoriesHtml = `
+        <div class="mb-3">
+          <div class="d-flex flex-wrap gap-2">
+            ${review.categories.map(cat => `<span class="badge bg-secondary me-1">${escapeHtml(cat.nom)}</span>`).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+  modalBody.innerHTML = `${getReviewPhotosCarouselHtml(review.photos)}
     <p>${escapeHtml(review.contenu || "")}</p>
+    ${categoriesHtml}
     <span class="badge bg-primary">${review.rating}/5</span>
   `;
 
@@ -564,13 +594,14 @@ document.addEventListener("DOMContentLoaded", function () {
     createForm.onsubmit = async function (e) {
       e.preventDefault();
       document.querySelectorAll('input[name="categories[]"]').forEach(el => el.remove());
-      selectedCategories.forEach((label, id) => {
+      const uniqueCategoryIds = [...new Set([...selectedCategories.keys()])];
+      uniqueCategoryIds.forEach(id => {
         const input = document.createElement('input');
         input.type = 'hidden';
         input.name = 'categories[]';
         input.value = id;
-        this.appendChild(input);
-      })
+        createForm.appendChild(input);
+      });
       const formData = new FormData(this);
       formData.append("id_utilisateur", window.currentUserId);
       try {

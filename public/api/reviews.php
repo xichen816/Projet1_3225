@@ -45,9 +45,11 @@ switch ($method) {
         $reviewData = $review->fetchById($id);
         $photos = $review->fetchPhotosById($id);
         $thumbnail = $review->fetchThumbnailById($id);
+        $categories = $review->fetchCategoriesById($id);
         if ($reviewData) {
           $reviewData['photos'] = $photos;
           $reviewData['thumbnail'] = $thumbnail;
+          $reviewData['categories'] = $categories;
           echo json_encode($reviewData);
           exit();
         } else {
@@ -127,11 +129,11 @@ switch ($method) {
       } else {
         $input['photos'] = [];
       }
-      $input['categories'] = $input['categories'] ?? [];
+      $input['categories'] = isset($_POST['categories']) ? $_POST['categories'] : [];
       $id = $review->create($input);
       echo json_encode(["success" => true, "review_id" => $id]);
     } catch (PDOException $e) {
-      echo json_encode(["success" => false, "message" => "Add review error.", "error" => $e->getMessage()]);
+      echo json_encode(["success" => false, "message" => "Add review error.", "error" => $e->getMessage(), "trace" => $e->getTraceAsString()]);
     }
     break;
 
