@@ -23,6 +23,7 @@ require_once "../includes/auth.php";
 
   <!-- <link rel="icon" href="../assets/icon/cafe-run-icon.png"> -->
   <link rel="stylesheet" href="../assets/css/style-explore.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>

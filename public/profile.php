@@ -6,7 +6,7 @@ require_once "../config/config.php";
 require_once "../includes/auth.php";
 requireAuth();
 $userId = $_SESSION['user_id'];
-$userName = $_SESSION['username'] ?? 'Votre profil';
+$userName = $_SESSION['username'] ?? 'Mon profil';
 ?>
 <!DOCTYPE html>
 <html lang="fr">

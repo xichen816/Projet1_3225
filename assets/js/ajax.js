@@ -145,22 +145,7 @@ function createReviewCard(review, readOnly = false, showCategories = true) {
       review.photos[0].filepath
     )}" class="card-img-top" alt="Review photo">`;
   }
-
-  let categories = "";
-  if (review.categories && review.categories.length > 0) {
-    const categoryTags = review.categories
-      .map(
-        (cat) =>
-          `<span class="badge bg-secondary me-1 mb-1">${escapeHtml(cat)}</span>`
-      )
-      .join(" ");
-    categories = `
-      <div class="mb-3">
-        <label class="form-label">Catégories</label>
-        <div class="d-flex flex-wrap gap-2">${categoryTags}</div>
-      </div>`;
-  }
-
+  
   let controls = "";
   if (
     !readOnly &&
@@ -189,8 +174,8 @@ function createReviewCard(review, readOnly = false, showCategories = true) {
           review.description || review.contenu || ""
         )}</div>
         <div class="mt-auto d-flex align-items-center justify-content-between">
-          <span class="badge bg-primary">${review.rating}/5</span>
-          <button class="btn btn-sm btn-primary open-review-modal" data-review-id="${
+          <span class="badge rating-badge">${review.rating}/5</span>
+          <button class="btn btn-sm read-more open-review-modal" data-review-id="${
             review.id
           }">Voir plus</button>
           ${controls}
@@ -198,6 +183,7 @@ function createReviewCard(review, readOnly = false, showCategories = true) {
       </div>
     </div>
   `;
+  function injectReviewsHtml(reviewsHtml) {
 }
 
 function createReviewTile(review) {
@@ -238,7 +224,7 @@ function createReviewTile(review) {
         <div class="review-title">${title}</div>
         <div class="cafe-info">
             <div class="cafe-name">${cafeName}</div>
-            <div class="author-name">by ${authorName}</div>
+            <div class="author-name">par ${authorName}</div>
         </div>
         <div class="review-description">${description}</div>
         <div class="card-footer">
@@ -325,7 +311,7 @@ function openReviewModal(review) {
   modalBody.innerHTML = `${getReviewPhotosCarouselHtml(review.photos)}
     <p>${escapeHtml(review.contenu || "")}</p>
     ${categoriesHtml}
-    <span class="badge bg-primary">${review.rating}/5</span>
+    <span class="badge rating-badge">${review.rating}/5</span>
   `;
 
   if (String(review.id_utilisateur) === String(currentUserId)) {

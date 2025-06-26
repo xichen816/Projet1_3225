@@ -61,29 +61,22 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </nav>
 
-    <div class="container-fluid main-content px-4 pt-4" style="height:calc(100vh - 80px);">
-        <div class="row feed-row h-100">
-            <div class="col-md-6 pe-4">
-                <h3>Mon Fil d'Actualités</h3>
-
-
-                <div id="feed-list" class="h-100 overflow-auto border-end">
-                    <div class="review-cards-row row gx-3 gy-3"></div>
-                    <div class="d-flex justify-content-center my-3">
-                        <button class="btn btn-secondary" id="loadMoreButton">Charger plus de revues</button>
-                    </div>
+    <div class="container-fluid main-content px-4 pt-4">
+        <div class="feed-column">
+            <h3>Mon Fil d'Actualités</h3>
+            <div id="feed-list" class="mb-5">
+                <div class="review-cards-row row gx-3 gy-3"></div>
+                <div class="d-flex justify-content-center my-3">
+                    <button class="btn btn-secondary" id="loadMoreButton">Charger plus de revues</button>
                 </div>
             </div>
-            <!-- User's Reviews -->
-            <div class="col-md-6 ps-4">
-                <h3>Mes Revues</h3>
 
-                <div id="user-review-list" class="h-100 overflow-auto">
-
-                </div>
-            </div>
+            <h3>Mes Revues</h3>
+            <div id="user-review-list" class="mb-5"></div>
         </div>
-        <button id="createReviewButton" class="btn btn-primary btn-lg rounded-circle shadow position-fixed p-0" style="
+    </div>
+
+    <button id="createReviewButton" class="btn btn-primary btn-lg rounded-circle shadow position-fixed p-0" style="
                 bottom:32px;
                 right:32px;
                 z-index:1050;
@@ -95,7 +88,6 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
             ">
             <div style="font-size:2em; line-height:1;">+</div>
         </button>
-    </div>
 
     <!-- Review Modal -->
     <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
