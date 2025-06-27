@@ -6,9 +6,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">Cafe Run</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 <a class="nav-link" href="index.php">Accueil</a>
@@ -16,6 +14,7 @@
                 <a class="nav-link" href="profile.php">Profil</a>
             </div>
         </div>
+        
         <div class="d-flex ms-auto">
             <div class="search-container d-flex align-items-center">
                 <form class="search-form d-flex">
@@ -26,22 +25,22 @@
                 </form>
             </div>
         </div>
+        
 
         <?php if (isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true): ?>
         <div class="d-flex ms-auto">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
+            <div class="nav-item dropdown d-none d-lg-block">
+                <a class="nav-link dropdown-toggle text-white" href="#" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
                     Menu
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                    <!-- Adjusted the menu links -->
                     <li><a class="dropdown-item" href="profile.php">Profil</a></li>
                     <li><a class="dropdown-item" href="feed.php">Feed</a></li>
                     <li><a class="dropdown-item" href="index.php">Accueil</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item" id="logout" href="../public/api/deconnexion.php">Déconnexion</a></li>
                 </ul>
-            </li>
+            </div>
         </div>
         <?php else: ?>
         <div class="d-flex ms-auto">
@@ -53,5 +52,9 @@
             </button>
         </div>
         <?php endif; ?>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
     </div>
 </nav>

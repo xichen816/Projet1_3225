@@ -190,12 +190,12 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
                     selectedCategories.set(option.value, option.text);
 
                     const tag = document.createElement('span');
-                    tag.className = 'badge bg-primary category-tag';
+                    tag.className = 'badge bg-success category-tag';
                     tag.textContent = option.text;
 
                     const removeBtn = document.createElement('button');
                     removeBtn.type = 'button';
-                    removeBtn.className = 'btn-close btn-close-white';
+                    removeBtn.className = 'btn-close';
                     removeBtn.onclick = () => {
                         selectedCategories.delete(option.value);
                         tag.remove();
