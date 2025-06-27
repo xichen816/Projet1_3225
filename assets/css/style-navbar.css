@@ -3,7 +3,10 @@
     align-items: center;
     justify-content: center;
     position: relative;
-    margin-left: 600px;
+    margin-left: auto;
+    margin-right: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 .search-form {
     transition: all 0.3s ease;
