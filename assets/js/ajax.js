@@ -183,7 +183,6 @@ function createReviewCard(review, readOnly = false, showCategories = true) {
       </div>
     </div>
   `;
-  function injectReviewsHtml(reviewsHtml) {
 }
 
 function createReviewTile(review) {
