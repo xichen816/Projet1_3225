@@ -20,28 +20,7 @@ $userName = $_SESSION['username'] ?? 'Mon profil';
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="index.php">Cafe Run</a>
-            <div class="d-flex">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        Menu
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                        <li><a class="dropdown-item" href="profile.php">Profil</a></li>
-                        <li><a class="dropdown-item" href="../public/index.php">Explorer</a></li>
-                        <li><a class="dropdown-item" href="../public/feed.php">Feed</a></li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" id="logout" href="../public/decconnexion.php">Déconnexion</a></li>
-                    </ul>
-                </li>
-            </div>
-        </div>
-    </nav>
+    <?php include '../includes/navbar.php'; ?>
 
     <div class="profile-header p-4">
         <h2><?= htmlspecialchars($userName) ?></h2>

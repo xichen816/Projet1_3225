@@ -35,31 +35,7 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <!-- <img src="../assets/icon/cafe-run-icon.png" width="32" height="32"> -->
-                Cafe Run
-            </a>
-            <form class="d-flex mx-auto">
-                <input class="form-control mr-sm-2" type="search" placeholder="Recherche..." aria-label="Recherche">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Rechercher</button>
-            </form>
-            <div class="ml-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <i class="bi bi-list"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                        <li><a class="dropdown-item" href="../public/profile.php">Profil</a></li>
-                        <li><a class="dropdown-item" href="../public/index.php">Explore</a></li>
-                        <!-- etc… -->
-                    </ul>
-                </li>
-            </div>
-        </div>
-    </nav>
+    <?php require_once "../includes/navbar.php"; ?>
 
     <div class="container-fluid main-content px-4 pt-4">
         <div class="feed-column">

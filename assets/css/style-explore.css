@@ -2,7 +2,7 @@
   --primary: #662200;
   --secondary: #edd972;
   --accent: #aec672;
-  --background: #fefbfb;
+  --background: #ffffff; 
   --text: #210b07;
   --text-light: rgba(33, 11, 7, 0.7);
   --text-lighter: rgba(33, 11, 7, 0.5);
@@ -46,6 +46,7 @@ body {
   font-size: 1.1rem;
   font-weight: 300;
 }
+
 
 .content-area {
   flex: 1;

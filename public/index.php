@@ -20,57 +20,20 @@ require_once "../includes/auth.php";
   <title>Explore - Cafe Run</title>
   <!-- TODO : Add CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <!-- <link rel="icon" href="../assets/icon/cafe-run-icon.png"> -->
   <link rel="stylesheet" href="../assets/css/style-explore.css">
-  <link rel="stylesheet" href="../assets/css/style.css">
+
 </head>
 
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-        <!-- <img src="../assets/icon/cafe-run-icon.png" width="32" height="32"> -->
-        Cafe Run
-      </a>
-      <form class="d-flex mx-auto">
-        <input class="form-control me-2" type="search" placeholder="Recherche..." aria-label="Recherche" disabled>
-        <button class="btn btn-outline-success" type="submit" disabled>Rechercher</button>
-      </form>
-      <?php if (isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true): ?>
-        <div class="d-flex">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-bs-toggle="dropdown" aria-expanded="false">
-              Menu
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-              <li><a class="dropdown-item" href="../public/profile.php">Profil</a></li>
-              <li><a class="dropdown-item" href="../public/feed.php">Feed</a></li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li><a class="dropdown-item" id="logout" href="../public/api/deconnexion.php">Déconnexion</a></li>
-            </ul>
-          </li>
-        </div>
-      <?php else: ?>
-        <div class="d-flex">
-          <button class="btn btn-primary me-2">
-            <a href="inscription.php" class="text-white text-decoration-none">S'inscrire</a>
-          </button>
-          <button class="btn btn-primary">
-            <a href="connexion.php" class="text-white text-decoration-none">Se connecter</a>
-          </button>
-        </div>
-      <?php endif; ?>
-    </div>
-  </nav>
   <?php
+  require_once "../includes/navbar.php";
+  require_once "../config/config.php";
   if (session_status() === PHP_SESSION_NONE) {
     session_start();
   }
-
-  require_once "../config/config.php";
   ?>
 
   <div class="main-container">
