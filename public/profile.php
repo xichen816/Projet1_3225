@@ -6,7 +6,7 @@ require_once "../config/config.php";
 require_once "../includes/auth.php";
 requireAuth();
 $userId = $_SESSION['user_id'];
-$userName = $_SESSION['username'] ?? 'Mon profil';
+$userName = $_SESSION['username'] ?? 'My Profile';
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -16,7 +16,7 @@ $userName = $_SESSION['username'] ?? 'Mon profil';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profil - Cafe Run</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/style-profile.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 
 <body>
@@ -24,7 +24,7 @@ $userName = $_SESSION['username'] ?? 'Mon profil';
 
     <div class="profile-header p-4">
         <h2><?= htmlspecialchars($userName) ?></h2>
-        <button class="btn-create-review" id="createReviewBtn">+ Nouvelle Revue</button>
+        <button class="btn-create-review" id="createReviewBtn">Add a Review</button>
     </div>
     <div class="container m-10">
         <div id="user-review-grid"></div>

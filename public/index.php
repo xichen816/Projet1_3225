@@ -23,7 +23,7 @@ require_once "../includes/auth.php";
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <!-- <link rel="icon" href="../assets/icon/cafe-run-icon.png"> -->
-  <link rel="stylesheet" href="../assets/css/style-explore.css">
+  <link rel="stylesheet" href="../assets/css/styles.css">
 
 </head>
 

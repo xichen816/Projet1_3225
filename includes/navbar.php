@@ -9,16 +9,17 @@
         
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
-                <a class="nav-link" href="index.php">Accueil</a>
-                <a class="nav-link" href="feed.php">Feed</a>
-                <a class="nav-link" href="profile.php">Profil</a>
+                <?php $currentPage = basename($_SERVER['PHP_SELF']); ?>
+                    <a class="nav-link <?= ($currentPage == 'index.php') ? 'active text-white' : '' ?>" href="index.php">Explore</a>
+                    <a class="nav-link <?= ($currentPage == 'feed.php') ? 'active text-white' : '' ?>" href="feed.php">Feed</a>
+                    <a class="nav-link <?= ($currentPage == 'profile.php') ? 'active text-white' : '' ?>" href="profile.php">Profile</a>
             </div>
         </div>
         
         <div class="d-flex ms-auto">
             <div class="search-container d-flex align-items-center">
                 <form class="search-form d-flex">
-                    <input class="search-input" type="search" placeholder="Recherche..." aria-label="Recherche">
+                    <input class="search-input" type="search" placeholder="Search for..." aria-label="Recherche">
                     <button class="btn-search" type="submit">
                         <i class="bi bi-search"></i>
                     </button>
@@ -34,21 +35,21 @@
                     Menu
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                    <li><a class="dropdown-item" href="profile.php">Profil</a></li>
+                    <li><a class="dropdown-item" href="profile.php">Profile</a></li>
                     <li><a class="dropdown-item" href="feed.php">Feed</a></li>
-                    <li><a class="dropdown-item" href="index.php">Accueil</a></li>
+                    <li><a class="dropdown-item" href="index.php">Explore</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" id="logout" href="../public/api/deconnexion.php">Déconnexion</a></li>
+                    <li><a class="dropdown-item" id="logout" href="../public/api/deconnexion.php">Log Out</a></li>
                 </ul>
             </div>
         </div>
         <?php else: ?>
         <div class="d-flex ms-auto">
             <button class="btn btn-primary me-2">
-                <a href="inscription.php" class="text-white text-decoration-none">S'inscrire</a>
+                <a href="inscription.php" class="text-white text-decoration-none">Sign In</a>
             </button>
             <button class="btn btn-primary">
-                <a href="connexion.php" class="text-white text-decoration-none">Se connecter</a>
+                <a href="connexion.php" class="text-white text-decoration-none">Log In</a>
             </button>
         </div>
         <?php endif; ?>

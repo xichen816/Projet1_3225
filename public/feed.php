@@ -31,23 +31,24 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
     <title>Feed - Cafe Run</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 
 <body>
     <?php require_once "../includes/navbar.php"; ?>
 
     <div class="container-fluid main-content px-4 pt-4">
-        <div class="feed-column">
-            <h3>Mon Fil d'Actualités</h3>
+        <div class="feed">
+            <h2>My Feed</h2>
+            <p>See the latest reviews</p>
             <div id="feed-list" class="mb-5">
                 <div class="review-cards-row row gx-3 gy-3"></div>
                 <div class="d-flex justify-content-center my-3">
-                    <button class="btn btn-secondary" id="loadMoreButton">Charger plus de revues</button>
+                    <button class="btn btn-secondary" id="loadMoreButton">Load More</button>
                 </div>
             </div>
 
-            <h3>Mes Revues</h3>
+            <h2>My Reviews</h2>
             <div id="user-review-list" class="mb-5"></div>
         </div>
     </div>

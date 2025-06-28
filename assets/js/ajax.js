@@ -175,9 +175,9 @@ function createReviewCard(review, readOnly = false, showCategories = true) {
         )}</div>
         <div class="mt-auto d-flex align-items-center justify-content-between">
           <span class="badge rating-badge">${review.rating}/5</span>
-          <button class="btn btn-sm read-more open-review-modal" data-review-id="${
+          <button class="btn btn-sm open-review-modal" data-review-id="${
             review.id
-          }">Voir plus</button>
+          }">Read More</button>
           ${controls}
         </div>
       </div>
@@ -228,7 +228,7 @@ function createReviewTile(review) {
         <div class="review-description">${description}</div>
         <div class="card-footer">
             <div class="review-date">${reviewDate}</div>
-            <a href="#" class="read-more">Read More</a>
+            <a href="#" class="read-more-explore">Read More</a>
         </div>
     </div>
   `;
