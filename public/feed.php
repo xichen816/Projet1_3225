@@ -31,63 +31,31 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
     <title>Feed - Cafe Run</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 
-<body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <!-- <img src="../assets/icon/cafe-run-icon.png" width="32" height="32"> -->
-                Cafe Run
-            </a>
-            <form class="d-flex mx-auto">
-                <input class="form-control mr-sm-2" type="search" placeholder="Recherche..." aria-label="Recherche">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Rechercher</button>
-            </form>
-            <div class="ml-auto">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <i class="bi bi-list"></i>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
-                        <li><a class="dropdown-item" href="../public/profile.php">Profil</a></li>
-                        <li><a class="dropdown-item" href="../public/index.php">Explore</a></li>
-                        <!-- etc… -->
-                    </ul>
-                </li>
-            </div>
-        </div>
-    </nav>
+<body class="scrollable-page">
+    <?php require_once "../includes/navbar.php"; ?>
 
     <div class="container-fluid main-content px-4 pt-4">
-        <div class="feed-column">
-            <h3>Mon Fil d'Actualités</h3>
+        <div class="feed">
+            <h2>My Feed</h2>
+            <p>Latest updates</p>
             <div id="feed-list" class="mb-5">
                 <div class="review-cards-row row gx-3 gy-3"></div>
                 <div class="d-flex justify-content-center my-3">
-                    <button class="btn btn-secondary" id="loadMoreButton">Charger plus de revues</button>
+                    <button class="btn btn-load-more" id="loadMoreButton">Load More</button>
                 </div>
             </div>
 
-            <h3>Mes Revues</h3>
+            <h2>My Reviews</h2>
             <div id="user-review-list" class="mb-5"></div>
         </div>
     </div>
 
-    <button id="createReviewButton" class="btn btn-primary btn-lg rounded-circle shadow position-fixed p-0" style="
-                bottom:32px;
-                right:32px;
-                z-index:1050;
-                width:64px;
-                height:64px;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-            ">
-            <div style="font-size:2em; line-height:1;">+</div>
-        </button>
+    <button id="createReviewButton" class="btn btn-lg btn-create rounded-circle shadow position-fixed p-0">
+    <div class="create-button-icon">+</div>
+    </button>
 
     <!-- Review Modal -->
     <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
@@ -109,7 +77,7 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="modal fade" id="createReviewModal" tabindex="-1" aria-labelledby="createReviewModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg create-modal">
             <div class="modal-content">
                 <form id="createReviewForm">
                     <div class="modal-header">
@@ -214,12 +182,12 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
                     selectedCategories.set(option.value, option.text);
 
                     const tag = document.createElement('span');
-                    tag.className = 'badge bg-primary category-tag';
+                    tag.className = 'badge bg-success category-tag';
                     tag.textContent = option.text;
 
                     const removeBtn = document.createElement('button');
                     removeBtn.type = 'button';
-                    removeBtn.className = 'btn-close btn-close-white';
+                    removeBtn.className = 'btn-close';
                     removeBtn.onclick = () => {
                         selectedCategories.delete(option.value);
                         tag.remove();
