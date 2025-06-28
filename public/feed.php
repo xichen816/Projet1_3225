@@ -34,17 +34,17 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
 
-<body>
+<body class="scrollable-page">
     <?php require_once "../includes/navbar.php"; ?>
 
     <div class="container-fluid main-content px-4 pt-4">
         <div class="feed">
             <h2>My Feed</h2>
-            <p>See the latest reviews</p>
+            <p>Latest updates</p>
             <div id="feed-list" class="mb-5">
                 <div class="review-cards-row row gx-3 gy-3"></div>
                 <div class="d-flex justify-content-center my-3">
-                    <button class="btn btn-secondary" id="loadMoreButton">Load More</button>
+                    <button class="btn btn-load-more" id="loadMoreButton">Load More</button>
                 </div>
             </div>
 
@@ -53,18 +53,9 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </div>
 
-    <button id="createReviewButton" class="btn btn-primary btn-lg rounded-circle shadow position-fixed p-0" style="
-                bottom:32px;
-                right:32px;
-                z-index:1050;
-                width:64px;
-                height:64px;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-            ">
-            <div style="font-size:2em; line-height:1;">+</div>
-        </button>
+    <button id="createReviewButton" class="btn btn-lg btn-create rounded-circle shadow position-fixed p-0">
+    <div class="create-button-icon">+</div>
+    </button>
 
     <!-- Review Modal -->
     <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
@@ -86,7 +77,7 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
 
     <div class="modal fade" id="createReviewModal" tabindex="-1" aria-labelledby="createReviewModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg create-modal">
             <div class="modal-content">
                 <form id="createReviewForm">
                     <div class="modal-header">

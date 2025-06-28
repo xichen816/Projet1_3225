@@ -164,17 +164,17 @@ function createReviewCard(review, readOnly = false, showCategories = true) {
       <div class="card-body d-flex flex-column">
         <h5 class="card-title mb-1">${escapeHtml(review.titre)}</h5>
         <div class="mb-1 text-muted small">
-          par ${escapeHtml(author)} | ${escapeHtml(cafe)}
+          ${escapeHtml(cafe)} | Review by ${escapeHtml(author)}
         </div>
-        ${showCategories && review.categories && review.categories.length > 0 ? `
-        <div class="mb-1">
-          ${review.categories.map(cat => `<span class="badge bg-secondary me-1">${escapeHtml(cat)}</span>`).join('')}
-        </div>` : ''}
         <div class="mb-2 text-truncate">${escapeHtml(
           review.description || review.contenu || ""
         )}</div>
+        ${showCategories && review.categories && review.categories.length > 0 ? `
+        <div class="mb-1">
+          ${review.categories.map(cat => `<span class="badge me-1 category-badge">${escapeHtml(cat)}</span>`).join('')}
+        </div>` : ''}
         <div class="mt-auto d-flex align-items-center justify-content-between">
-          <span class="badge rating-badge">${review.rating}/5</span>
+          <span class="rating-badge">★ ${review.rating}/5</span>
           <button class="btn btn-sm open-review-modal" data-review-id="${
             review.id
           }">Read More</button>
@@ -223,7 +223,7 @@ function createReviewTile(review) {
         <div class="review-title">${title}</div>
         <div class="cafe-info">
             <div class="cafe-name">${cafeName}</div>
-            <div class="author-name">par ${authorName}</div>
+            <div class="author-name">Review by ${authorName}</div>
         </div>
         <div class="review-description">${description}</div>
         <div class="card-footer">
@@ -301,7 +301,7 @@ function openReviewModal(review) {
       categoriesHtml = `
         <div class="mb-3">
           <div class="d-flex flex-wrap gap-2">
-            ${review.categories.map(cat => `<span class="badge bg-secondary me-1">${escapeHtml(cat.nom)}</span>`).join('')}
+            ${review.categories.map(cat => `<span class="badge me-1 category-badge">${escapeHtml(cat.nom)}</span>`).join('')}
           </div>
         </div>
       `;
@@ -310,7 +310,7 @@ function openReviewModal(review) {
   modalBody.innerHTML = `${getReviewPhotosCarouselHtml(review.photos)}
     <p>${escapeHtml(review.contenu || "")}</p>
     ${categoriesHtml}
-    <span class="badge rating-badge">${review.rating}/5</span>
+    <span class="rating-badge">★ ${review.rating}/5</span>
   `;
 
   if (String(review.id_utilisateur) === String(currentUserId)) {
