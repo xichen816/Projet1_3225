@@ -55,7 +55,7 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <button id="createReviewButton" class="btn btn-lg btn-create rounded-circle shadow position-fixed p-0">
-    <div class="create-button-icon">+</div>
+        <div class="create-button-icon">+</div>
     </button>
 
     <!-- Review Modal -->
@@ -97,7 +97,8 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
                         </div>
                         <div class="mb-3">
                             <label for="categoryInput" class="form-label">Catégories</label>
-                            <input type="text" class="form-control" id="categoryInput" placeholder="Ajouter une catégorie" readonly />
+                            <input type="text" class="form-control" id="categoryInput"
+                                placeholder="Ajouter une catégorie" readonly />
                             <select name="categories[]" id="categorySelect" class="form-select hidden" multiple>
                                 <?php foreach ($categories as $cat): ?>
                                     <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nom']) ?></option>
@@ -150,6 +151,12 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
                 openReviewModal(review);
             }
         });
+
+        let feedGridModule = {
+            updateReviews: updateFeedList
+        };
+        activeGridModule = feedGridModule;
+        console.log("activeGridModule set:", activeGridModule);
 
         document.getElementById('user-review-list').addEventListener('click', async function (e) {
             const card = e.target.closest('.card');

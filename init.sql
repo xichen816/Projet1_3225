@@ -32,13 +32,13 @@ CREATE TABLE revues (
     titre VARCHAR(255) NOT NULL,
     id_cafe INT NOT NULL,
     id_utilisateur INT NOT NULL,
-    image_url VARCHAR(255) DEFAULT NULL, --Optional thumbnail image URL
-    description TEXT NOT NULL, -- Short preview (gets auto-cut from contenu when inserted)
-    contenu TEXT NOT NULL,     -- Full review body
+    image_url VARCHAR(255) DEFAULT NULL,
+    description TEXT NOT NULL, 
+    contenu TEXT NOT NULL,
     rating INT CHECK (rating >= 1 AND rating <= 5),
     date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_cafe) REFERENCES cafes(id) ON DELETE CASCADE,
-    FOREIGN KEY (id_utilisateur) REFERENCES utilisateurs(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateurs(id) ON DELETE CASCADE
 );
 
 
