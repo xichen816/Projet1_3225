@@ -14,7 +14,7 @@ $userName = $_SESSION['username'] ?? 'My Profile';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil - Cafe Run</title>
+    <title>Profile - Cafe Run</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
@@ -64,6 +64,9 @@ $userName = $_SESSION['username'] ?? 'My Profile';
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         window.currentUserId = <?= json_encode($_SESSION['id']) ?>;
+        window.currentUserRole = <?= isset($_SESSION['role']) ? json_encode($_SESSION['role']) : 'null' ?>;
+        window.isAdmin = false;
+
         let profileGridModule;
 
         async function loadUserReviews() {

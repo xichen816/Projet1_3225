@@ -141,6 +141,8 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
     <script src="../assets/js/ajax.js"></script>
     <script>
         window.currentUserId = <?= json_encode($_SESSION['id']) ?>;
+        window.currentUserRole = <?= isset($_SESSION['role']) ? json_encode($_SESSION['role']) : 'null' ?>;
+        window.isAdmin = false;
 
         document.getElementById('feed-list').addEventListener('click', async function (e) {
             const card = e.target.closest('.card');

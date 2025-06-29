@@ -82,6 +82,9 @@ require_once "../includes/auth.php";
   <script src="../assets/js/ajax.js"></script>
   <script>
     window.currentUserId = <?= json_encode($_SESSION['id']) ?>;
+    window.currentUserRole = <?= isset($_SESSION['role']) ? json_encode($_SESSION['role']) : 'null' ?>;
+    window.isAdmin = false;
+
     let allReviews = [];
     let exploreGridModule;
 

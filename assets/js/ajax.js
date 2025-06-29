@@ -313,7 +313,10 @@ function openReviewModal(review) {
     <span class="rating-badge">★ ${review.rating}/5</span>
   `;
 
-  if (String(review.id_utilisateur) === String(currentUserId)) {
+  const isOwner = String(review.id_utilisateur) === String(currentUserId);
+  const isAdmin = String(currentUserRole) === "admin" && window.isAdmin;
+
+  if (isOwner || isAdmin) {
     modalFooter.innerHTML = `
       <button type="button" class="btn btn-warning" id="editReviewBtn">Modifier</button>
       <button type="button" class="btn btn-danger" id="deleteReviewBtn">Supprimer</button>
@@ -324,7 +327,9 @@ function openReviewModal(review) {
     document.getElementById("deleteReviewBtn").onclick = () =>
       handleDeleteReview(review.id);
   } else {
-    modalFooter.innerHTML = `<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>`;
+    modalFooter.innerHTML = `
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+    `;
   }
 
   new bootstrap.Modal(document.getElementById("reviewModal")).show();

@@ -91,7 +91,6 @@ body.scrollable-page::before {
   font-weight: 300;
 }
 
-
 .feed h2 {
   font-size: 3rem;
   font-family: 'Acma Semibold', sans-serif; 
@@ -111,7 +110,7 @@ body.scrollable-page::before {
 
 .profile-username + p {
   font-size: 1.3rem;
-  font-family: "Segoe UI", Roboto, sans-serif;
+  font-family: 'Acma Semibold', sans-serif;
   color: var(--text-light);
 }
 

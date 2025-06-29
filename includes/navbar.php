@@ -13,6 +13,9 @@
                     <a class="nav-link <?= ($currentPage == 'index.php') ? 'active text-white' : '' ?>" href="index.php">Explore</a>
                     <a class="nav-link <?= ($currentPage == 'feed.php') ? 'active text-white' : '' ?>" href="feed.php">Feed</a>
                     <a class="nav-link <?= ($currentPage == 'profile.php') ? 'active text-white' : '' ?>" href="profile.php">Profile</a>
+                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                        <a class="nav-link <?= ($currentPage == 'admin.php') ? 'active text-white' : '' ?>" href="admin.php">Admin</a>
+                    <?php endif; ?>
             </div>
         </div>
         
@@ -39,6 +42,10 @@
                     <li><a class="dropdown-item" href="feed.php">Feed</a></li>
                     <li><a class="dropdown-item" href="index.php">Explore</a></li>
                     <li><hr class="dropdown-divider"></li>
+                    <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                        <li><a class="dropdown-item" href="admin.php">Admin</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                    <?php endif; ?>
                     <li><a class="dropdown-item" id="logout" href="../public/api/deconnexion.php">Log Out</a></li>
                 </ul>
             </div>
