@@ -129,6 +129,14 @@ async function fetchReviewsByUser(userId) {
   return await apiFetch(`api/reviews.php?user_id=${userId}`);
 }
 
+async function fetchReviewsByCafe(cafeId) {
+  return await apiFetch(`api/reviews.php?cafe_id=${cafeId}`);
+}
+
+async function fetchReviewsByCategory(categoryId) {
+  return await apiFetch(`api/reviews.php?category_id=${categoryId}`);
+}
+
 async function fetchFeedReviews(userId) {
   return await apiFetch(`api/reviews.php?feed=1&user_id=${userId}`);
 }
@@ -145,7 +153,7 @@ function createReviewCard(review, readOnly = false, showCategories = true) {
       review.photos[0].filepath
     )}" class="card-img-top" alt="Review photo">`;
   }
-  
+
   let controls = "";
   if (
     !readOnly &&
@@ -169,10 +177,21 @@ function createReviewCard(review, readOnly = false, showCategories = true) {
         <div class="mb-2 text-truncate">${escapeHtml(
           review.description || review.contenu || ""
         )}</div>
-        ${showCategories && review.categories && review.categories.length > 0 ? `
+        ${
+          showCategories && review.categories && review.categories.length > 0
+            ? `
         <div class="mb-1">
-          ${review.categories.map(cat => `<span class="badge me-1 category-badge">${escapeHtml(cat)}</span>`).join('')}
-        </div>` : ''}
+          ${review.categories
+            .map(
+              (cat) =>
+                `<span class="badge me-1 category-badge">${escapeHtml(
+                  cat
+                )}</span>`
+            )
+            .join("")}
+        </div>`
+            : ""
+        }
         <div class="mt-auto d-flex align-items-center justify-content-between">
           <span class="rating-badge">★ ${review.rating}/5</span>
           <button class="btn btn-sm open-review-modal" data-review-id="${
@@ -254,9 +273,17 @@ function updateFeedList(reviews) {
   reviews.forEach((r, i) => {
     let cardHtml;
     if (i === 0 && odd) {
-      cardHtml = `<div class="col-12">${createReviewCard(r, false, true)}</div>`;
+      cardHtml = `<div class="col-12">${createReviewCard(
+        r,
+        false,
+        true
+      )}</div>`;
     } else {
-      cardHtml = `<div class="col-6">${createReviewCard(r, false, false)}</div>`;
+      cardHtml = `<div class="col-6">${createReviewCard(
+        r,
+        false,
+        false
+      )}</div>`;
     }
     list.insertAdjacentHTML("beforeend", cardHtml);
   });
@@ -297,15 +324,22 @@ function openReviewModal(review) {
   modalTitle.textContent = review.titre;
 
   let categoriesHtml = "";
-    if (review.categories && review.categories.length > 0) {
-      categoriesHtml = `
+  if (review.categories && review.categories.length > 0) {
+    categoriesHtml = `
         <div class="mb-3">
           <div class="d-flex flex-wrap gap-2">
-            ${review.categories.map(cat => `<span class="badge me-1 category-badge">${escapeHtml(cat.nom)}</span>`).join('')}
+            ${review.categories
+              .map(
+                (cat) =>
+                  `<span class="badge me-1 category-badge">${escapeHtml(
+                    cat.nom
+                  )}</span>`
+              )
+              .join("")}
           </div>
         </div>
       `;
-    }
+  }
 
   modalBody.innerHTML = `${getReviewPhotosCarouselHtml(review.photos)}
     <p>${escapeHtml(review.contenu || "")}</p>
@@ -406,6 +440,57 @@ function handleDeleteReview(reviewId) {
       .catch((err) =>
         showToast(`Erreur lors de la suppression : ${err.message}`, "error")
       );
+  }
+}
+
+async function handleDeleteAndUpdateGrid(reviewId, gridModule) {
+  if (!gridModule) return;
+  if (!confirm("Êtes-vous sûr de vouloir supprimer cette revue ?")) return;
+
+  try {
+    const res = await deleteReview(reviewId);
+    if (res.success || res.deleted) {
+      const newReviews = gridModule
+        .getReviews()
+        .filter((r) => String(r.id) !== String(reviewId));
+      gridModule.updateReviews(newReviews);
+
+      showToast("Revue supprimée !");
+      fetchReviewsByUser(window.currentUserId).then(gridModule.updateReviews);
+      const modal = document.getElementById("reviewModal");
+      if (modal && bootstrap.Modal.getInstance(modal)) {
+        bootstrap.Modal.getInstance(modal).hide();
+      }
+    } else {
+      showToast(res.message || "Erreur lors de la suppression", "error");
+    }
+  } catch (err) {
+    showToast(`Erreur lors de la suppression : ${err.message}`, "error");
+  }
+}
+
+function handleSearchSelection(item, gridModule) {
+  switch (item.type) {
+    case "review":
+      fetchReviewById(item.id).then((review) => {
+        gridModule.updateReviews([review]);
+      });
+      break;
+    case "cafe":
+      fetchReviewsByCafe(item.id).then((reviews) => {
+        gridModule.updateReviews(reviews);
+      });
+      break;
+    case "user":
+      fetchReviewsByUser(item.id).then((reviews) => {
+        gridModule.updateReviews(reviews);
+      });
+      break;
+    case "category":
+      fetchReviewsByCategory(item.id).then((reviews) => {
+        gridModule.updateReviews(reviews);
+      });
+      break;
   }
 }
 
@@ -522,7 +607,6 @@ function createPaginatedGrid({
   }
 
   function setupPagination(pageSelector, dotSelector, infoSelector) {
-
     if (pageSelector.prev) {
       document.querySelector(pageSelector.prev).onclick = () => {
         if (currentPage > 1) {
@@ -578,17 +662,22 @@ document.addEventListener("DOMContentLoaded", function () {
   if (createForm) {
     createForm.onsubmit = async function (e) {
       e.preventDefault();
-      document.querySelectorAll('input[name="categories[]"]').forEach(el => el.remove());
+      document
+        .querySelectorAll('input[name="categories[]"]')
+        .forEach((el) => el.remove());
       const uniqueCategoryIds = [...new Set([...selectedCategories.keys()])];
-      uniqueCategoryIds.forEach(id => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'categories[]';
+      uniqueCategoryIds.forEach((id) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "categories[]";
         input.value = id;
         createForm.appendChild(input);
       });
       const formData = new FormData(this);
       formData.append("id_utilisateur", window.currentUserId);
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
       try {
         const result = await createReview(formData);
         if (result.success) {
@@ -607,6 +696,77 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     };
   }
+
+  const input = document.getElementById("search-input");
+  const list = document.getElementById("autocomplete-list");
+  const searchForm = document.querySelector(".search-form");
+  let lastSearchResults = [];
+
+  input.addEventListener("input", async function () {
+    const term = this.value.trim();
+    list.innerHTML = "";
+    list.classList.remove("show");
+
+    if (term.length < 2) return;
+    try {
+      const resp = await fetch(
+        `api/search.php?pfx=${encodeURIComponent(term)}&top=5`
+      );
+      const data = await resp.json();
+      lastSearchResults = data;
+      if (!data.length) return;
+      data.forEach((item) => {
+        const li = document.createElement("li");
+        li.className = "dropdown-item";
+        li.innerHTML = `${escapeHtml(item.label)} <small class="text-muted">(${
+          item.type
+        })</small>`;
+        li.addEventListener("click", () => {
+          input.value = item.label;
+          list.innerHTML = "";
+          list.classList.remove("show");
+          handleSearchSelection(item, activeGridModule);
+        });
+        list.appendChild(li);
+      });
+      list.classList.add("show");
+    } catch (err) {
+      list.innerHTML = "";
+      list.classList.remove("show");
+    }
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!input.contains(e.target) && !list.contains(e.target)) {
+      list.innerHTML = "";
+      list.classList.remove("show");
+    }
+  });
+
+  searchForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    const term = input.value.trim();
+    if (term.length < 2) return;
+
+    const matchedItem = lastSearchResults.find((item) => item.label === term);
+    if (matchedItem) {
+      handleSearchSelection(matchedItem, activeGridModule);
+      return;
+    }
+
+    const resp = await fetch(
+      `api/search.php?pfx=${encodeURIComponent(term)}&top=30`
+    );
+    const data = await resp.json();
+    const reviewItems = data.filter((item) => item.type === "review");
+    if (reviewItems.length) {
+      activeGridModule.updateReviews(reviewItems);
+    } else {
+      activeGridModule.updateReviews([]);
+    }
+    list.innerHTML = "";
+    list.classList.remove("show");
+  });
 });
 
 setInterval(async () => {
