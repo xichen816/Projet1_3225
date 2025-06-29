@@ -40,7 +40,7 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="container-fluid main-content px-4 pt-4">
         <div class="feed">
             <h2>My Feed</h2>
-            <p>Latest updates</p>
+            <p>Check Out the latest updates</p>
             <div id="feed-list" class="mb-5">
                 <div class="review-cards-row row gx-3 gy-3"></div>
                 <div class="d-flex justify-content-center my-3">
@@ -49,6 +49,7 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
             </div>
 
             <h2>My Reviews</h2>
+            <p>See all your runs</p>
             <div id="user-review-list" class="mb-5"></div>
         </div>
     </div>
@@ -206,10 +207,21 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
                     selectedTagsContainer.appendChild(tag);
                 }
             });
-
             categorySelect.classList.add('hidden');
             categoryInput.value = Array.from(selectedCategories.values()).join(', ');
         });
+
+        const form = document.getElementById('createReviewForm');
+        form.addEventListener('submit', (event) => {
+            const selectedCategoryIds = Array.from(selectedCategories.keys()).join(',');
+            const selectedCategoriesInput = document.createElement('input');
+            selectedCategoriesInput.type = 'hidden';
+            selectedCategoriesInput.name = 'selectedCategories';
+            selectedCategoriesInput.value = selectedCategoryIds;
+
+            form.appendChild(selectedCategoriesInput);
+        });
+                
 
     </script>
 

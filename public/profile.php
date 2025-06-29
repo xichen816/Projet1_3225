@@ -33,7 +33,8 @@ $userName = $_SESSION['username'] ?? 'My Profile';
     <?php include '../includes/navbar.php'; ?>
 
     <div class="profile-header p-4">
-        <h2><?= htmlspecialchars($userName) ?></h2>
+        <h2 class="profile-username"><?= htmlspecialchars($userName) ?></h2>
+        <p>Read, edit, or add a review</p>
         <button class="btn-create-review" id="createReviewBtn">Add a Review</button>
     </div>
     <div class="container m-10">
