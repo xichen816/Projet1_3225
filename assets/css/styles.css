@@ -81,13 +81,13 @@ body.scrollable-page::before {
 .header h1 {
   color: var(--text);
   font-size: 3rem;
-  font-weight: 700;
+  
   margin-bottom: 8px;
 }
 
 .header p {
   color: var(--text-light);
-  font-size: 1.1rem;
+  font-size: 1.5rem;
   font-weight: 300;
 }
 
@@ -99,9 +99,20 @@ body.scrollable-page::before {
 }
 
 .feed p {
-  font-size: 2rem;
-  
+  font-size: 1.3rem;
   color: white;
+}
+
+.profile-username {
+  font-size: 3rem;
+  font-family: 'Acma Semibold', sans-serif;
+  color: #0b1117
+}
+
+.profile-username + p {
+  font-size: 1.3rem;
+  font-family: "Segoe UI", Roboto, sans-serif;
+  color: var(--text-light);
 }
 
 .content-area {
@@ -596,11 +607,6 @@ select.hidden {
   margin: 0;
 }
 
-.review-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 12px 40px rgba(33, 11, 7, 0.2);
-  border-color: var(--secondary);
-}
 
 .read-more-explore {
   font-size: 0.7rem;
@@ -641,6 +647,8 @@ select.hidden {
 }
 
 .card.rectangle-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(33, 11, 7, 0.25);
   border: 1px solid var(--secondary);
 }
 

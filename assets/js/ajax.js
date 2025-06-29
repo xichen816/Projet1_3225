@@ -163,8 +163,8 @@ function createReviewCard(review, readOnly = false, showCategories = true) {
       ${imgHtml}
       <div class="card-body d-flex flex-column">
         <h5 class="card-title mb-1">${escapeHtml(review.titre)}</h5>
-        <div class="mb-1 text-muted small">
-          ${escapeHtml(cafe)} | Review by ${escapeHtml(author)}
+        <div class="mb-1 cafe-name">
+          ${escapeHtml(cafe)} | Reviewed by ${escapeHtml(author)}
         </div>
         <div class="mb-2 text-truncate">${escapeHtml(
           review.description || review.contenu || ""
@@ -223,7 +223,7 @@ function createReviewTile(review) {
         <div class="review-title">${title}</div>
         <div class="cafe-info">
             <div class="cafe-name">${cafeName}</div>
-            <div class="author-name">Review by ${authorName}</div>
+            <div class="author-name">Reviewed by ${authorName}</div>
         </div>
         <div class="review-description">${description}</div>
         <div class="card-footer">
@@ -334,6 +334,7 @@ function openReviewModal(review) {
 function switchToEditMode(review) {
   const modalBody = document.getElementById("reviewModalBody");
   const modalFooter = document.getElementById("reviewModalFooter");
+
   modalBody.innerHTML = `
     <form id="editReviewForm" enctype="multipart/form-data">
       <div class="mb-3">
@@ -348,7 +349,6 @@ function switchToEditMode(review) {
           review.contenu
         )}</textarea>
       </div>
-      <div class="mb-3">
         <label for="editReviewRating" class="form-label">Note (1-5)</label>
         <input type="number" class="form-control" id="editReviewRating" name="rating" min="1" max="5" value="${
           review.rating
@@ -578,15 +578,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (createForm) {
     createForm.onsubmit = async function (e) {
       e.preventDefault();
-      document.querySelectorAll('input[name="categories[]"]').forEach(el => el.remove());
-      const uniqueCategoryIds = [...new Set([...selectedCategories.keys()])];
-      uniqueCategoryIds.forEach(id => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = 'categories[]';
-        input.value = id;
-        createForm.appendChild(input);
-      });
+      
       const formData = new FormData(this);
       formData.append("id_utilisateur", window.currentUserId);
       try {
