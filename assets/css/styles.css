@@ -28,6 +28,7 @@ body {
   background: var(--background);
   height: 100vh;
   overflow: hidden;
+  padding-top: 80px;
 }
 
 body.scrollable-page {
@@ -63,7 +64,7 @@ body.scrollable-page::before {
 /* Layout Wrappers */
 
 .main-container {
-  min-height: calc(100vh - 56px);
+  min-height: calc(100vh - 60px);
   display: flex;
   flex-direction: column;
   padding: 20px;
