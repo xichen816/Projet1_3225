@@ -347,7 +347,10 @@ function openReviewModal(review) {
     <span class="rating-badge">★ ${review.rating}/5</span>
   `;
 
-  if (String(review.id_utilisateur) === String(currentUserId)) {
+  const isOwner = String(review.id_utilisateur) === String(currentUserId);
+  const isAdmin = String(currentUserRole) === "admin" && window.isAdmin;
+
+  if (isOwner || isAdmin) {
     modalFooter.innerHTML = `
       <button type="button" class="btn btn-warning" id="editReviewBtn">Modifier</button>
       <button type="button" class="btn btn-danger" id="deleteReviewBtn">Supprimer</button>
@@ -358,7 +361,9 @@ function openReviewModal(review) {
     document.getElementById("deleteReviewBtn").onclick = () =>
       handleDeleteReview(review.id);
   } else {
-    modalFooter.innerHTML = `<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>`;
+    modalFooter.innerHTML = `
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+    `;
   }
 
   new bootstrap.Modal(document.getElementById("reviewModal")).show();
@@ -662,17 +667,6 @@ document.addEventListener("DOMContentLoaded", function () {
   if (createForm) {
     createForm.onsubmit = async function (e) {
       e.preventDefault();
-      document
-        .querySelectorAll('input[name="categories[]"]')
-        .forEach((el) => el.remove());
-      const uniqueCategoryIds = [...new Set([...selectedCategories.keys()])];
-      uniqueCategoryIds.forEach((id) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "categories[]";
-        input.value = id;
-        createForm.appendChild(input);
-      });
       const formData = new FormData(this);
       formData.append("id_utilisateur", window.currentUserId);
       for (let [key, value] of formData.entries()) {

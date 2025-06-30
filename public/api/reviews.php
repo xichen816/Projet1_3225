@@ -108,79 +108,52 @@ switch ($method) {
             }
             $input['photos'] = [];
 
-            if (isset($_FILES['photos']) && is_array($_FILES['photos']['name'])) {
-                foreach ($_FILES['photos']['tmp_name'] as $key => $tmp_name) {
-                    if ($_FILES['photos']['error'][$key] === UPLOAD_ERR_OK) {
-                        $fileName = basename($_FILES['photos']['name'][$key]);
-                        $uniqueName = uniqid() . '-' . $fileName;
-                        $filePathAbs = $uploadDir . $uniqueName;
-                        $filePathRel = '/assets/images/uploads/' . $uniqueName;
-                        if (move_uploaded_file($tmp_name, $filePathAbs)) {
-                            $input['photos'][] = [
-                                'filepath' => $filePathRel,
-                                'type' => $_FILES['photos']['type'][$key],
-                                'size' => $_FILES['photos']['size'][$key]
-                            ];
-                        } else {
-                            throw new Exception("Failed to upload file: " . $fileName);
-                        }
-                    }
-                }
-            } elseif (isset($_FILES['photos']) && !is_array($_FILES['photos']['name'])) {
-                if ($_FILES['photos']['error'] === UPLOAD_ERR_OK) {
-                    $fileName = basename($_FILES['photos']['name']);
-                    $uniqueName = uniqid() . '-' . $fileName;
-                    $filePathAbs = $uploadDir . $uniqueName;
-                    $filePathRel = '/assets/images/uploads/' . $uniqueName;
-                    if (move_uploaded_file($_FILES['photos']['tmp_name'], $filePathAbs)) {
-                        $input['photos'][] = [
-                            'filepath' => $filePathRel,
-                            'type' => $_FILES['photos']['type'],
-                            'size' => $_FILES['photos']['size']
-                        ];
-                    } else {
-                        throw new Exception("Failed to upload file: " . $fileName);
-                    }
-                }
+      if (isset($_FILES['photos']) && is_array($_FILES['photos']['name'])) {
+        foreach ($_FILES['photos']['tmp_name'] as $key => $tmp_name) {
+          if ($_FILES['photos']['error'][$key] === UPLOAD_ERR_OK) {
+            $fileName = basename($_FILES['photos']['name'][$key]);
+            $uniqueName = uniqid() . '-' . $fileName;
+            $filePathAbs = $uploadDir . $uniqueName;
+            $filePathRel = '/assets/images/uploads/' . $uniqueName;
+            if (move_uploaded_file($tmp_name, $filePathAbs)) {
+              $input['photos'][] = [
+                'filepath' => $filePathRel,
+                'type' => $_FILES['photos']['type'][$key],
+                'size' => $_FILES['photos']['size'][$key]
+              ];
             } else {
-                $input['photos'] = [];
+              throw new Exception("Failed to upload file: " . $fileName);
             }
-            // $input['categories'] = isset($_POST['categories']) ? $_POST['categories'] : [];
-
-            if (isset($_POST['categories'])) {
-                $categories = $_POST['categories'];
-                if (!is_array($categories)) {
-                    $categories = [$categories];
-                }
-                $categories = array_filter($categories, fn($c) => is_numeric($c));
-                $input['categories'] = array_map('intval', $categories);
-            } else {
-                $input['categories'] = [];
-            }
-
-
-            if (!is_numeric($data['id_cafe']) || !is_numeric($data['rating']) || !is_numeric($data['id_utilisateur'])) {
-                throw new Exception("Invalid numeric fields.");
-            }
-            if (!is_string($data['titre']) || !is_string($data['contenu'])) {
-                throw new Exception("Invalid string fields.");
-            }
-            if (!is_array($input['categories'])) {
-                throw new Exception("Invalid categories — not an array.");
-            }
-            foreach ($input['categories'] as $catId) {
-                if (!is_numeric($catId)) {
-                    throw new Exception("Invalid category: " . $catId);
-                }
-            }
-
-
-            $id = $review->create($input);
-            echo json_encode(["success" => true, "review_id" => $id]);
-        } catch (PDOException $e) {
-            echo json_encode(["success" => false, "message" => "Add review error.", "error" => $e->getMessage(), "trace" => $e->getTraceAsString()]);
+          }
         }
-        break;
+      } elseif (isset($_FILES['photos']) && !is_array($_FILES['photos']['name'])) {
+        if ($_FILES['photos']['error'] === UPLOAD_ERR_OK) {
+          $fileName = basename($_FILES['photos']['name']);
+          $uniqueName = uniqid() . '-' . $fileName;
+          $filePathAbs = $uploadDir . $uniqueName;
+          $filePathRel = '/assets/images/uploads/' . $uniqueName;
+          if (move_uploaded_file($_FILES['photos']['tmp_name'], $filePathAbs)) {
+            $input['photos'][] = [
+              'filepath' => $filePathRel,
+              'type' => $_FILES['photos']['type'],
+              'size' => $_FILES['photos']['size']
+            ];
+          } else {
+            throw new Exception("Failed to upload file: " . $fileName);
+          }
+        }
+      } else {
+        $input['photos'] = [];
+      }
+      $input['categories'] = isset($_POST['selectedCategories']) && !empty($_POST['selectedCategories'])
+        ? explode(',', $_POST['selectedCategories'])
+        : [];
+      $id = $review->create($input);
+      echo json_encode(["success" => true, "review_id" => $id]);
+    } catch (PDOException $e) {
+      echo json_encode(["success" => false, "message" => "Add review error.", "error" => $e->getMessage(), "trace" => $e->getTraceAsString()]);
+    }
+    break;
 
     case 'PUT':
         // Update review logic

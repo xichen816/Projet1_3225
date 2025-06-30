@@ -24,7 +24,7 @@ $userName = $_SESSION['username'] ?? 'My Profile';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil - Cafe Run</title>
+    <title>Profile - Cafe Run</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/styles.css">
 </head>
@@ -34,8 +34,8 @@ $userName = $_SESSION['username'] ?? 'My Profile';
 
     <div class="profile-header p-4">
         <h2 class="profile-username"><?= htmlspecialchars($userName) ?></h2>
-        <p>Read, edit, or add a review</p>
-        <button class="btn-create-review" id="createReviewBtn">Add a Review</button>
+        <p>Click on a review to edit</p>
+        <button class="btn-create-review" id="createReviewBtn">New Review</button>
     </div>
     <div class="container m-10">
         <div id="user-review-grid"></div>
@@ -136,6 +136,9 @@ $userName = $_SESSION['username'] ?? 'My Profile';
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         window.currentUserId = <?= json_encode($_SESSION['id']) ?>;
+        window.currentUserRole = <?= isset($_SESSION['role']) ? json_encode($_SESSION['role']) : 'null' ?>;
+        window.isAdmin = false;
+
         let profileGridModule;
 
         async function loadUserReviews() {
@@ -146,12 +149,22 @@ $userName = $_SESSION['username'] ?? 'My Profile';
                         gridId: "user-review-grid",
                         reviews,
                         createCardHtml: createReviewTile,
-                        perPage: 15,
+                        perPage: 3,
                         onCardClick: review => openReviewModal(review, "edit")
                     });
                     profileGridModule.render();
                 } else {
-                    profileGridModule.updateReviews(reviews);
+                    profileGridModule.setupPagination(
+                        { prev: '#profile-prev-page', next: '#profile-next-page' },
+                        '.page-dot',
+                        { current: '#profile-current-page', total: '#profile-total-pages' }
+                        );
+
+                        profileGridModule.updatePaginationUI(
+                        { prev: '#profile-prev-page', next: '#profile-next-page' },
+                        '.page-dot',
+                        { current: '#profile-current-page', total: '#profile-total-pages' }
+                        );
                 }
 
                 document.querySelectorAll('.btn-edit').forEach(btn => {

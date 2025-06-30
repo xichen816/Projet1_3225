@@ -46,15 +46,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $utilisateur = $requete->fetch(PDO::FETCH_ASSOC);
 
         if ($utilisateur && password_verify($password, $utilisateur['mot_de_passe'])) {
-            $token = bin2hex(random_bytes(32));
-
-            $update = $pdo->prepare("UPDATE utilisateurs SET token = :token WHERE email = :email");
-            $update->execute(['token' => $token, 'email' => $email]);
-
             $_SESSION['id'] = $utilisateur['id'];
             $_SESSION['email'] = $email;
             $_SESSION['role'] = $utilisateur['role'];
+
+            $token = bin2hex(random_bytes(32));
             $_SESSION['token'] = $token;
+            $update = $pdo->prepare("UPDATE utilisateurs SET token = :token WHERE email = :email");
+            $update->execute(['token' => $token, 'email' => $email]);
+
+            $_SESSION['authenticated'] = true;
 
             echo json_encode(
                 [

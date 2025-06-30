@@ -82,6 +82,9 @@ require_once "../includes/auth.php";
   <script src="../assets/js/ajax.js"></script>
   <script>
     window.currentUserId = <?= json_encode($_SESSION['id']) ?>;
+    window.currentUserRole = <?= isset($_SESSION['role']) ? json_encode($_SESSION['role']) : 'null' ?>;
+    window.isAdmin = false;
+
     let allReviews = [];
     let exploreGridModule;
 
@@ -92,7 +95,7 @@ require_once "../includes/auth.php";
           gridId: "review-grid",
           reviews: allReviews,
           createCardHtml: createReviewTile,
-          perPage: 15,
+          perPage: 12,
           onCardClick: review => fetchReviewById(review.id).then(openReviewModal)
         });
         exploreGridModule.render();

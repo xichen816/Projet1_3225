@@ -63,7 +63,7 @@ body.scrollable-page::before {
 /* Layout Wrappers */
 
 .main-container {
-  height: calc(100vh - 56px);;
+  min-height: calc(100vh - 56px);
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -91,7 +91,6 @@ body.scrollable-page::before {
   font-weight: 300;
 }
 
-
 .feed h2 {
   font-size: 3rem;
   font-family: 'Acma Semibold', sans-serif; 
@@ -111,7 +110,7 @@ body.scrollable-page::before {
 
 .profile-username + p {
   font-size: 1.3rem;
-  font-family: "Segoe UI", Roboto, sans-serif;
+  font-family: 'Acma Semibold', sans-serif;
   color: var(--text-light);
 }
 
