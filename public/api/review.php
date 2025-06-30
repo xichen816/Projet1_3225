@@ -94,6 +94,36 @@ class Review
         return $reviews;
     }
 
+    public function fetchPage($limit = 6, $offset = 0)
+    {
+        $sql = "
+    SELECT r.id, r.titre, r.contenu, r.rating, r.date,
+               u.id AS userid, u.nom AS username,
+               c.id AS cafeid, c.nom AS cafename
+        FROM revues r
+        JOIN utilisateurs u ON r.id_utilisateur = u.id
+        JOIN cafes c ON r.id_cafe = c.id
+        ORDER BY r.date DESC LIMIT ? OFFSET ?
+    ";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindValue(1, $limit, PDO::PARAM_INT);
+        $stmt->bindValue(2, $offset, PDO::PARAM_INT);
+        $stmt->execute();
+        $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $reviewIds = array_column($reviews, 'id');
+        $photosByReview = $this->getPhotosByReviewIds($reviewIds);
+        $categoriesByReview = $this->getCategoriesByReviewIds($reviewIds);
+
+        foreach ($reviews as &$review) {
+            $id = $review['id'];
+            $review['photos'] = $photosByReview[$id] ?? [];
+            $review['categories'] = $categoriesByReview[$id] ?? [];
+        }
+
+        return $reviews;
+    }
+
     public function fetchById($id)
     {
         $sql = "

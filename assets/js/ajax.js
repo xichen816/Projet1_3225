@@ -776,4 +776,4 @@ setInterval(async () => {
     console.error("Erreur lors de la récupération des dernières revues :", err);
     showToast("Erreur lors de la récupération des dernières revues", "error");
   }
-}, 60000);
+}, 15000);

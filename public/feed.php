@@ -95,7 +95,7 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="reviewTitle" class="form-label">Title</label>
                             <input type="text" class="form-control" id="reviewTitle" name="titre" required>
@@ -107,7 +107,8 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
                         </div>
                         <div class="mb-3">
                             <label for="categoryInput" class="form-label">Categories</label>
-                            <input type="text" class="form-control" id="categoryInput" placeholder="Apply one or more categories" readonly />
+                            <input type="text" class="form-control" id="categoryInput"
+                                placeholder="Apply one or more categories" readonly />
                             <select id="categorySelect" class="form-select hidden" multiple>
                                 <?php foreach ($categories as $cat): ?>
                                     <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nom']) ?></option>
@@ -223,7 +224,26 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
 
             form.appendChild(selectedCategoriesInput);
         });
-    
+
+        let currentPage = 1;
+        const loadMoreButton = document.getElementById('loadMoreButton');
+        loadMoreButton.addEventListener('click', async function () {
+            currentPage++;
+            const response = await fetch(`reviews.php?page=${currentPage}`);
+            if (response.ok) {
+                const data = await response.text();
+                document.querySelector('.review-cards-row').insertAdjacentHTML('beforeend', data);
+                // Disable if no more reviews
+                if (!data.trim()) {
+                    loadMoreButton.disabled = true;
+                    loadMoreButton.textContent = "No more reviews";
+                }
+            } else {
+                alert('No more reviews to load.');
+                loadMoreButton.disabled = true;
+            }
+        });
+
     </script>
 
     <div id="message"></div>
