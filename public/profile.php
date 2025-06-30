@@ -25,7 +25,7 @@ $userName = $_SESSION['username'] ?? 'My Profile';
     <div class="profile-header p-4">
         <h2 class="profile-username"><?= htmlspecialchars($userName) ?></h2>
         <p>Click on a review to edit</p>
-        <button class="btn-create-review" id="createReviewBtn">New Review</button>
+        <button class="btn-create-review" id="createReviewBtn">Add Review</button>
     </div>
     <div class="container m-10">
         <div id="user-review-grid"></div>
