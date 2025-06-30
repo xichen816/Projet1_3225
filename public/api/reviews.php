@@ -129,7 +129,9 @@ switch ($method) {
       } else {
         $input['photos'] = [];
       }
-      $input['categories'] = isset($_POST['categories']) ? $_POST['categories'] : [];
+      $input['categories'] = isset($_POST['selectedCategories']) && !empty($_POST['selectedCategories'])
+        ? explode(',', $_POST['selectedCategories'])
+        : [];
       $id = $review->create($input);
       echo json_encode(["success" => true, "review_id" => $id]);
     } catch (PDOException $e) {

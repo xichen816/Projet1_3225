@@ -95,7 +95,7 @@ require_once "../includes/auth.php";
           gridId: "review-grid",
           reviews: allReviews,
           createCardHtml: createReviewTile,
-          perPage: 15,
+          perPage: 12,
           onCardClick: review => fetchReviewById(review.id).then(openReviewModal)
         });
         exploreGridModule.render();

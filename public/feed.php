@@ -82,23 +82,33 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="modal-content">
                 <form id="createReviewForm">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="createReviewModalLabel">Créer une Revue</h5>
+                        <h5 class="modal-title" id="createReviewModalLabel">New Review</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="cafeSelect" class="form-label">Sélectionner un Café</label>
+                            <label for="cafeSelect" class="form-label">Cafe</label>
                             <select class="form-select" id="cafeSelect" name="id_cafe" required>
-                                <option value="">Choisir un café</option>
+                                <option value="">Select your cafe</option>
                                 <?php foreach ($cafes as $cafe): ?>
                                     <option value="<?= $cafe['id'] ?>"><?= htmlspecialchars($cafe['nom']) ?></option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
+                        
                         <div class="mb-3">
-                            <label for="categoryInput" class="form-label">Catégories</label>
-                            <input type="text" class="form-control" id="categoryInput" placeholder="Ajouter une catégorie" readonly />
-                            <select name="categories[]" id="categorySelect" class="form-select hidden" multiple>
+                            <label for="reviewTitle" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="reviewTitle" name="titre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="reviewContent" class="form-label">Your Review</label>
+                            <textarea class="form-control" id="reviewContent" name="contenu" rows="4"
+                                required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoryInput" class="form-label">Categories</label>
+                            <input type="text" class="form-control" id="categoryInput" placeholder="Apply one or more categories" readonly />
+                            <select id="categorySelect" class="form-select hidden" multiple>
                                 <?php foreach ($categories as $cat): ?>
                                     <option value="<?= $cat['id'] ?>"><?= htmlspecialchars($cat['nom']) ?></option>
                                 <?php endforeach; ?>
@@ -106,21 +116,12 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
                             <div id="selectedCategoryTags" class="mt-2 d-flex flex-wrap gap-2"></div>
                         </div>
                         <div class="mb-3">
-                            <label for="reviewTitle" class="form-label">Titre de la Revue</label>
-                            <input type="text" class="form-control" id="reviewTitle" name="titre" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="reviewContent" class="form-label">Contenu de la Revue</label>
-                            <textarea class="form-control" id="reviewContent" name="contenu" rows="4"
-                                required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="reviewRating" class="form-label">Note (1 à 5)</label>
+                            <label for="reviewRating" class="form-label">Your Rating (1 to 5)</label>
                             <input type="number" class="form-control" id="reviewRating" name="rating" min="1" max="5"
                                 required>
                         </div>
                         <div class="mb-3">
-                            <label for="reviewPhotos" class="form-label">Ajouter des Photos</label>
+                            <label for="reviewPhotos" class="form-label">Your Pictures</label>
                             <input type="file" class="form-control" id="reviewPhotos" name="photos[]" multiple
                                 accept="image/*">
                         </div>
@@ -128,7 +129,7 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                             Fermer</button>
-                        <button type="submit" class="btn btn-primary">Créer la Revue</button>
+                        <button type="submit" class="btn btn-primary">Publish</button>
                     </div>
                 </form>
             </div>
@@ -216,8 +217,7 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
 
             form.appendChild(selectedCategoriesInput);
         });
-                
-
+    
     </script>
 
     <div id="message"></div>

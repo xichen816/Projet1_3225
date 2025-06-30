@@ -63,7 +63,7 @@ body.scrollable-page::before {
 /* Layout Wrappers */
 
 .main-container {
-  height: calc(100vh - 56px);;
+  min-height: calc(100vh - 56px);
   display: flex;
   flex-direction: column;
   padding: 20px;

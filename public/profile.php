@@ -24,8 +24,8 @@ $userName = $_SESSION['username'] ?? 'My Profile';
 
     <div class="profile-header p-4">
         <h2 class="profile-username"><?= htmlspecialchars($userName) ?></h2>
-        <p>Read, edit, or add a review</p>
-        <button class="btn-create-review" id="createReviewBtn">Add a Review</button>
+        <p>Click on a review to edit</p>
+        <button class="btn-create-review" id="createReviewBtn">New Review</button>
     </div>
     <div class="container m-10">
         <div id="user-review-grid"></div>
@@ -77,12 +77,22 @@ $userName = $_SESSION['username'] ?? 'My Profile';
                         gridId: "user-review-grid",
                         reviews,
                         createCardHtml: createReviewTile,
-                        perPage: 15,
+                        perPage: 3,
                         onCardClick: review => openReviewModal(review, "edit")
                     });
                     profileGridModule.render();
                 } else {
-                    profileGridModule.updateReviews(reviews);
+                    profileGridModule.setupPagination(
+                        { prev: '#profile-prev-page', next: '#profile-next-page' },
+                        '.page-dot',
+                        { current: '#profile-current-page', total: '#profile-total-pages' }
+                        );
+
+                        profileGridModule.updatePaginationUI(
+                        { prev: '#profile-prev-page', next: '#profile-next-page' },
+                        '.page-dot',
+                        { current: '#profile-current-page', total: '#profile-total-pages' }
+                        );
                 }
 
                 document.querySelectorAll('.btn-edit').forEach(btn => {

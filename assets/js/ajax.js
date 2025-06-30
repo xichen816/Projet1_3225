@@ -583,7 +583,6 @@ document.addEventListener("DOMContentLoaded", function () {
   if (createForm) {
     createForm.onsubmit = async function (e) {
       e.preventDefault();
-      
       const formData = new FormData(this);
       formData.append("id_utilisateur", window.currentUserId);
       try {
