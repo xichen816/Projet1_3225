@@ -99,6 +99,8 @@ require_once "../includes/auth.php";
           onCardClick: review => fetchReviewById(review.id).then(openReviewModal)
         });
         exploreGridModule.render();
+        activeGridModule = exploreGridModule;
+        console.log("activeGridModule set:", activeGridModule);
         exploreGridModule.setupPagination(
           { prev: '#prev-page', next: '#next-page' },
           '.page-dot',

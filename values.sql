@@ -33,7 +33,7 @@ INSERT INTO cafes (nom, adresse, categories, telephone, email, site_web) VALUES
   ('Café Lumière','123 Rue de la Paix','Espresso,Latte','+123-45-6789','contact@lumieré.fr','https://cafelum.com'),
   ('Café Parisien','45 Av. des Champs','Cappuccino,Latte','+1987-654-3232','bonjour@parisien.fr','https://pariscafe.fr'),
   ('Café du Coin','78 Rue de la République','Espresso,Mocha','+123-45-6789','caf@ducoin.ca','https://cafeducoin.ca'),
-  ('Café Cozy','12 Rue des Fleurs','Cappuccino,Mocha','+987-65-4321','cozycafe@cafe.ca','https://cozycafe.ca');
+  ('Café Cozy','12 Rue des Fleurs','Cappuccino,Mocha','+987-65-4321','cozycafe@cafe.ca','https://cozycafe.ca'),
   ('Café Horizon',      '21 Rue Montagne', 'Espresso,Cappuccino', '+33-1-2345-6789', 'contact@horizon.fr', 'https://cafehorizon.fr'),
   ('Café Lune',         '88 Avenue Lumière', 'Latte,Mocha', '+33-6-9876-5432', 'info@lune.fr', 'https://cafelune.fr'),
   ('Café Zen',          '5 Rue du Silence', 'Matcha,Tea', '+33-7-7654-3210', 'zen@cafe.fr', 'https://zen-cafe.fr'),
@@ -65,7 +65,7 @@ INSERT INTO revues (id_cafe, id_utilisateur, rating, titre, contenu) VALUES
   (1, 1, 5,  'Excellent Espresso',      'Un espresso parfait, crème onctueuse.'),
   (1, 2, 4,  'Bon mais cher',           'Très bon café, un peu cher pour la taille.'),
   (2, 1, 4,  'Super Cappuccino',        'Texture impeccable, service rapide.'),
-  (3, 1, 5,  'Café du Coin',            'Un café chaleureux avec une ambiance conviviale.');
+  (3, 1, 5,  'Café du Coin',            'Un café chaleureux avec une ambiance conviviale.'),
   (1, 3, 4, 'Ambiance agréable', 'J’ai passé une bonne après-midi à travailler ici.'),
   (2, 4, 3, 'Un peu bruyant', 'Le café est bon mais il y avait beaucoup de bruit.'),
   (2, 5, 5, 'Parfait pour le petit-déjeuner', 'Le croissant et le cappuccino étaient délicieux.'),
@@ -99,7 +99,7 @@ INSERT INTO revues_categories (id_categorie, id_revue) VALUES
   (5, 2),  -- Great for Dessert → revue 2
   (6, 3),  -- Great for Coffee Lovers → revue 3;
   (2, 4),  -- Great for Lunch → revue 4
-  (3, 4);  -- Great for Groups → revue 4
+  (3, 4),  -- Great for Groups → revue 4
   (1, 5), (3, 5), (5, 5),             -- Revue 5
   (7, 6), (6, 6),                     -- Revue 6
   (8, 7), (11, 7),                    -- Revue 7

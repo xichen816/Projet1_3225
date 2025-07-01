@@ -1,4 +1,3 @@
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="../assets/css/style-navbar.css">
@@ -6,7 +5,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark custom-navbar">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">Cafe Run</a>
-        
+
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 <?php $currentPage = basename($_SERVER['PHP_SELF']); ?>
@@ -18,18 +17,22 @@
                     <?php endif; ?>
             </div>
         </div>
-        
+
         <div class="d-flex ms-auto">
             <div class="search-container d-flex align-items-center">
                 <form class="search-form d-flex">
-                    <input class="search-input" type="search" placeholder="Search for..." aria-label="Recherche">
+                    <input id="search-input" class="search-input" type="search" placeholder="Search for..."
+                        aria-label="Recherche" autocomplete="off">
                     <button class="btn-search" type="submit">
                         <i class="bi bi-search"></i>
                     </button>
                 </form>
+                <ul id="autocomplete-list" class="dropdown-menu w-100"
+                    style="max-height: 200px; overflow-y: auto; position: absolute; top: 100%; left: 0; z-index: 1000;">
+                </ul>
             </div>
         </div>
-        
+
 
         <?php if (isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true): ?>
         <div class="d-flex ms-auto">
@@ -51,17 +54,18 @@
             </div>
         </div>
         <?php else: ?>
-        <div class="d-flex ms-auto">
-            <button class="btn btn-primary me-2">
-                <a href="inscription.php" class="text-white text-decoration-none">Sign In</a>
-            </button>
-            <button class="btn btn-primary">
-                <a href="connexion.php" class="text-white text-decoration-none">Log In</a>
-            </button>
-        </div>
+            <div class="d-flex ms-auto">
+                <button class="btn btn-primary me-2">
+                    <a href="inscription.php" class="text-white text-decoration-none">Sign In</a>
+                </button>
+                <button class="btn btn-primary">
+                    <a href="connexion.php" class="text-white text-decoration-none">Log In</a>
+                </button>
+            </div>
         <?php endif; ?>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
     </div>

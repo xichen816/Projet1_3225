@@ -55,7 +55,7 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <button id="createReviewButton" class="btn btn-lg btn-create rounded-circle shadow position-fixed p-0">
-    <div class="create-button-icon">+</div>
+        <div class="create-button-icon">+</div>
     </button>
 
     <!-- Review Modal -->
@@ -153,6 +153,12 @@ $categories = $catstmt->fetchAll(PDO::FETCH_ASSOC);
                 openReviewModal(review);
             }
         });
+
+        let feedGridModule = {
+            updateReviews: updateFeedList
+        };
+        activeGridModule = feedGridModule;
+        console.log("activeGridModule set:", activeGridModule);
 
         document.getElementById('user-review-list').addEventListener('click', async function (e) {
             const card = e.target.closest('.card');

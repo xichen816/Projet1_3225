@@ -1,12 +1,15 @@
 <?php
-class Review {
+class Review
+{
     private $pdo;
 
-    public function __construct($pdo) {
+    public function __construct($pdo)
+    {
         $this->pdo = $pdo;
     }
 
-    public function getOwnerId($reviewId) {
+    public function getOwnerId($reviewId)
+    {
         $sql = 'SELECT id_utilisateur FROM revues WHERE id = :reviewId';
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':reviewId' => $reviewId]);
@@ -15,8 +18,10 @@ class Review {
         return $result ? $result['id_utilisateur'] : null;
     }
 
-    private function getPhotosByReviewIds(array $reviewIds, bool $onlyPrimary = false): array {
-        if (empty($reviewIds)) return [];
+    private function getPhotosByReviewIds(array $reviewIds, bool $onlyPrimary = false): array
+    {
+        if (empty($reviewIds))
+            return [];
 
         $inQuery = implode(',', array_fill(0, count($reviewIds), '?'));
         $sql = "SELECT id_revue, filepath FROM photos_revue WHERE id_revue IN ($inQuery)";
@@ -36,8 +41,10 @@ class Review {
         return $photosByReview;
     }
 
-    private function getCategoriesByReviewIds(array $reviewIds): array {
-        if (empty($reviewIds)) return [];
+    private function getCategoriesByReviewIds(array $reviewIds): array
+    {
+        if (empty($reviewIds))
+            return [];
 
         $inQuery = implode(',', array_fill(0, count($reviewIds), '?'));
         $sql = "
@@ -59,8 +66,9 @@ class Review {
         return $categoriesByReview;
     }
 
-    public function fetchAll() {
-    $sql = "
+    public function fetchAll()
+    {
+        $sql = "
         SELECT r.id, r.titre, r.contenu, r.rating, r.date,
                    u.id AS userid, u.nom AS username,
                    c.id AS cafeid, c.nom AS cafename
@@ -69,21 +77,21 @@ class Review {
             JOIN cafes c ON r.id_cafe = c.id
             ORDER BY r.date DESC
     ";
-    $stmt = $this->pdo->prepare($sql);
-    $stmt->execute();
-    $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $reviewIds = array_column($reviews, 'id');
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $reviewIds = array_column($reviews, 'id');
 
-    $photosByReview = $this->getPhotosByReviewIds($reviewIds);
-    $categoriesByReview = $this->getCategoriesByReviewIds($reviewIds);
+        $photosByReview = $this->getPhotosByReviewIds($reviewIds);
+        $categoriesByReview = $this->getCategoriesByReviewIds($reviewIds);
 
-    foreach ($reviews as &$review) {
+        foreach ($reviews as &$review) {
             $id = $review['id'];
             $review['photos'] = $photosByReview[$id] ?? [];
             $review['categories'] = $categoriesByReview[$id] ?? [];
         }
 
-    return $reviews;
+        return $reviews;
     }
 
     public function fetchById($id)
@@ -122,9 +130,56 @@ class Review {
         foreach ($reviews as &$review) {
             $review['photos'] = $photosByReview[$review['id']] ?? [];
         }
-        
+
         return $reviews;
 
+    }
+
+    public function fetchByCafeId(int $cafeId)
+    {
+        $sql = "SELECT r.*, u.nom AS username, c.nom AS cafename
+            FROM revues r
+            JOIN utilisateurs u ON r.id_utilisateur = u.id
+            JOIN cafes c ON r.id_cafe = c.id
+            WHERE r.id_cafe = :cafeId
+            ORDER BY r.date DESC";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':cafeId' => $cafeId]);
+        $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $reviewIds = array_column($reviews, 'id');
+
+        $photosByReview = $this->getPhotosByReviewIds($reviewIds);
+
+        foreach ($reviews as &$review) {
+            $review['photos'] = $photosByReview[$review['id']] ?? [];
+        }
+
+        return $reviews;
+    }
+
+    function fetchByCategoryId(int $categoryId)
+    {
+        $sql = "
+            SELECT r.*, u.nom AS username, c.nom AS cafename
+            FROM revues r
+            JOIN utilisateurs u ON r.id_utilisateur = u.id
+            JOIN cafes c ON r.id_cafe = c.id
+            JOIN revues_categories rc ON r.id = rc.id_revue
+            WHERE rc.id_categorie = :categoryId
+            ORDER BY r.date DESC
+        ";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':categoryId' => $categoryId]);
+        $reviews = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $reviewIds = array_column($reviews, 'id');
+
+        $photosByReview = $this->getPhotosByReviewIds($reviewIds);
+
+        foreach ($reviews as &$review) {
+            $review['photos'] = $photosByReview[$review['id']] ?? [];
+        }
+
+        return $reviews;
     }
 
     public function fetchFeed($userId)
@@ -186,7 +241,8 @@ class Review {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function create($data) {
+    public function create($data)
+    {
         $this->pdo->beginTransaction();
         try {
             $sql = "INSERT INTO revues (id_cafe, id_utilisateur, rating, contenu, description, titre)
@@ -205,9 +261,9 @@ class Review {
             // If there are photos, insert each into photos_revue
             if (!empty($data['photos'])) {
                 $stmtPhoto = $this->pdo->prepare(
-                        "INSERT INTO photos_revue (id_revue, filepath, is_primary) VALUES (:id_revue, :filepath, :is_primary)"
-                    );
-                    
+                    "INSERT INTO photos_revue (id_revue, filepath, is_primary) VALUES (:id_revue, :filepath, :is_primary)"
+                );
+
                 foreach ($data['photos'] as $i => $photo) {
                     $stmtPhoto->execute([
                         ':id_revue' => $reviewId,
@@ -237,7 +293,8 @@ class Review {
         }
     }
 
-    public function update($id, $data) {
+    public function update($id, $data)
+    {
         $sql = "UPDATE revues SET titre = :titre, contenu = :contenu, rating = :rating
                 WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
@@ -261,8 +318,9 @@ class Review {
             }
         }
     }
-    
-    public function delete($id) {
+
+    public function delete($id)
+    {
         $sql = "DELETE FROM revues WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([':id' => $id]);
