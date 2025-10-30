@@ -159,10 +159,10 @@ switch ($method) {
             }
 
 
-            if (!is_numeric($data['id_cafe']) || !is_numeric($data['rating']) || !is_numeric($data['id_utilisateur'])) {
+            if (!is_numeric($input['id_cafe']) || !is_numeric($input['rating']) || !is_numeric($input['id_utilisateur'])) {
                 throw new Exception("Invalid numeric fields.");
             }
-            if (!is_string($data['titre']) || !is_string($data['contenu'])) {
+            if (!is_string($input['titre']) || !is_string($input['contenu'])) {
                 throw new Exception("Invalid string fields.");
             }
             if (!is_array($input['categories'])) {
